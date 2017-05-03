@@ -1,24 +1,46 @@
 #include "iostream"
-#include "string"
-#include "deque"
+#include "vector"
 
 using namespace std;
+
+struct TreeNode
+{
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+};
 
 class Solution
 {
 public:
-    string toHex(int num)
+    int pathSum(TreeNode* root,int sum)
     {
-        if(!num)
-            return "0";
-        char table[16]={'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
-        deque<char> ret;
-        unsigned int n=num;
-        while(n)
+        vector<int> path;
+        int ret=0;
+        core(root,path,ret,sum);
+        return ret;
+    }
+private:
+    void core(TreeNode* node,vector<int>& path,int &ret,int k)
+    {
+        if(node==NULL)
+            return;
+        path.push_back(node->val);
+        ret+=findSum(path,k);
+        core(node->left,path,ret,k);
+        core(node->right,path,ret,k);
+        path.pop_back();
+    }
+    int findSum(vector<int>& path,int k)
+    {
+        int sum=0;
+        int ret=0;
+        for(int i=path.size()-1;i>=0;i--)
         {
-            ret.push_front(table[n%16]);
-            n/=16;
+            sum+=path[i];
+            if(sum==k)
+                ret++;
         }
-        return string(ret.begin(),ret.end());
+        return ret;
     }
 };
