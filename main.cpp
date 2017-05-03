@@ -1,34 +1,44 @@
 #include "iostream"
-#include "string"
+#include "vector"
+#include "unordered_map"
 
 using namespace std;
+
+struct TreeNode
+{
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+};
 
 class Solution
 {
 public:
-    bool repeatedSubstringPattern(string s)
+    vector<int> findMode(TreeNode * root)
     {
-        for(int i=1;i<=s.length()/2;i++)
+        unordered_map<int,int> ret;
+        core(root,ret);
+        vector<int> r;
+        int maxCount=0;
+        for(auto itr:ret)
         {
-            if(s[i]==s[0])
-                if(check(s,i))
-                    return true;
+            if(itr.second>maxCount)
+                maxCount=itr.second;
         }
-        return false;
+        for(auto itr:ret)
+        {
+            if(itr.second==maxCount)
+                r.push_back(itr.first);
+        }
+        return r;
     }
 private:
-    bool check(string &s,int index)
+    void core(TreeNode* node,unordered_map<int,int> &ret)
     {
-        if(s.length()%index)
-            return false;
-        for(int i=0;i<index;i++)
-        {
-            for(int j=index+i;j<s.length();j+=index)
-            {
-                if(s[j]!=s[i])
-                    return false;
-            }
-        }
-        return true;
+        if(node==NULL)
+            return;
+        ret[node->val]++;
+        core(node->left,ret);
+        core(node->right,ret);
     }
 };
