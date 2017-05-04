@@ -6,14 +6,18 @@ using namespace std;
 class Solution
 {
 public:
-    int arrangeCoins(int n)
+    vector<int> getRow(int rowIndex)
     {
-        int rows=0;
-        while(n>rows)
+        vector<vector<int>> ret{{1},{1,1}};
+        for(int i=2;i<=rowIndex;i++)
         {
-            rows++;
-            n-=rows;
+            ret.push_back({1});
+            for(int j=1;j<i;j++)
+            {
+                ret[i].push_back(ret[i-1][j]+ret[i-1][j-1]);
+            }
+            ret[i].push_back(1);
         }
-        return rows;
+        return ret[rowIndex];
     }
 };
