@@ -6,20 +6,24 @@ using namespace std;
 class Solution
 {
 public:
-    vector<int> plusOne(vector<int>& digits)
+    vector<vector<int>> generate(int numRows)
     {
-        if(digits.size()==0)
+        if(numRows==0)
             return {};
-        digits.back()+=1;
-        bool carry=false;
-        for(int i=digits.size()-1;i>=0;i--)
+        vector<vector<int>> ret{{1}};
+        for(int i=1;i<numRows;i++)
         {
-            digits[i]+=carry;
-            carry=digits[i]/10;
-            digits[i]%=9;
+            vector<int> tmp;
+            for(int j=0;j<ret[i-1].size();j++)
+            {
+                if(j-1>=0)
+                    tmp.push_back(ret[i-1][j-1]+ret[i-1][j]);
+                else
+                    tmp.push_back(ret[i-1][j]);
+            }
+            tmp.push_back(1);
+            ret.push_back(tmp);
         }
-        if(carry)
-            digits.insert(digits.begin(),1);
-        return digits;
+        return ret;
     }
 };
