@@ -1,5 +1,4 @@
 #include "iostream"
-#include "string"
 #include "vector"
 
 using namespace std;
@@ -9,32 +8,34 @@ struct TreeNode
     int val;
     TreeNode* left;
     TreeNode* right;
-
 };
 
 class Solution
 {
 public:
-    vector<string> binaryTreePaths(TreeNode * root)
+    bool isBalanced(TreeNode* root)
     {
-        if(root==NULL)
-            return {};
-        string path;
-        vector<string> ret;
-        core(root,path,ret);
-        return ret;
+        int depth=0;
+        return core(root,depth);
     }
 private:
-    void core(TreeNode* node,string & path,vector<string>& ret)
+    bool core(TreeNode* node,int &depth)
     {
-        if(node!=NULL)
-            path+="->"+to_string(node->val);
-        if(node->left==NULL&&node->right==NULL)
-            ret.push_back(string(path.begin()+2,path.end()));
-        if(node->left!=NULL)
-            core(node->left,path,ret);
-        if(node->right!=NULL)
-            core(node->right,path,ret);
-        path.erase(path.find_last_of("->"));
+        if(node==NULL)
+        {
+            depth=0;
+            return true;
+        }
+        int leftD=0;
+        if(!core(node->left,leftD))
+            return false;
+        int rightD=0;
+        if(!core(node->right,rightD))
+            return false;
+        int diff=leftD-rightD;
+        if(diff>1||diff<-1)
+            return false;
+        depth=(leftD>rightD?leftD:rightD)+1;
+        return true;
     }
 };
