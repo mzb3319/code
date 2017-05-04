@@ -1,31 +1,48 @@
 #include "iostream"
-#include "string"
-#include "unordered_set"
 
 using namespace std;
 
 class Solution
 {
 public:
-    string reverseVowels(string s)
+    bool isPerfectSquare(int num)
     {
-        unordered_set<char> table{'a','e','i','o','u','A','E','I','O','U'};
-        int beg=0,end=s.length()-1;
-        while(beg<=end)
+        int pre=0,i=2;
+        for(;i*i<num;i*=i)
         {
-            if(table.find(s[beg])!=table.end()&&table.find(s[end])!=table.end())
-            {
-                char tmp=s[beg];
-                s[beg]=s[end];
-                s[end]=tmp;
-                beg++;
-                end--;
-            }
-            else if(table.find(s[beg])==table.end())
-                beg++;
-            else
-                end--;
+            pre=i;
         }
-        return s;
+        if(i==num)
+            return true;
+        int ret=core(num,pre+1,i-1);
+        return ret*ret==num;
+    }
+private:
+    int core(int num,int beg,int end)
+    {
+        if(beg>end)
+            return beg;
+        int mid=(beg+end)/2;
+        int pow=mid*mid;
+        if(pow==num)
+            return mid;
+        else if(pow<num)
+            return core(num,mid+1,end);
+        else
+            return core(num,beg,mid-1);
+        return beg;
     }
 };
+/*上边的也存在溢出问题，要把int提升为long long
+class Solution
+{
+public:
+    bool isPerfectSquare(int num)
+    {
+        long long i=0;
+        while(i*i<num)
+            i++;
+        return i*i==num;
+    }
+};
+ */
