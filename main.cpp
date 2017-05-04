@@ -1,48 +1,25 @@
 #include "iostream"
+#include "vector"
 
 using namespace std;
 
 class Solution
 {
 public:
-    bool isPerfectSquare(int num)
+    vector<int> plusOne(vector<int>& digits)
     {
-        int pre=0,i=2;
-        for(;i*i<num;i*=i)
+        if(digits.size()==0)
+            return {};
+        digits.back()+=1;
+        bool carry=false;
+        for(int i=digits.size()-1;i>=0;i--)
         {
-            pre=i;
+            digits[i]+=carry;
+            carry=digits[i]/10;
+            digits[i]%=9;
         }
-        if(i==num)
-            return true;
-        int ret=core(num,pre+1,i-1);
-        return ret*ret==num;
-    }
-private:
-    int core(int num,int beg,int end)
-    {
-        if(beg>end)
-            return beg;
-        int mid=(beg+end)/2;
-        int pow=mid*mid;
-        if(pow==num)
-            return mid;
-        else if(pow<num)
-            return core(num,mid+1,end);
-        else
-            return core(num,beg,mid-1);
-        return beg;
+        if(carry)
+            digits.insert(digits.begin(),1);
+        return digits;
     }
 };
-/*上边的也存在溢出问题，要把int提升为long long
-class Solution
-{
-public:
-    bool isPerfectSquare(int num)
-    {
-        long long i=0;
-        while(i*i<num)
-            i++;
-        return i*i==num;
-    }
-};
- */
