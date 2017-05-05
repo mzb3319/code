@@ -1,33 +1,40 @@
-#include "string"
 #include "iostream"
-#include "unordered_map"
+#include "unordered_set"
+#include "cmath"
 
 using namespace std;
+
 
 class Solution
 {
 public:
-    bool isIsomorphic(string s,string t)
+    bool checkPerfectNumber(int num)
     {
-        if(s.length()!=t.length())
-            return false;
-        unordered_map<char,char> table1,table2;
-        for(int i=0;i<s.length();i++)
+        int sum=1;
+        int i=2;
+        double min=sqrt(num);
+        if(min/1.0>0.00000001)
+            min++;
+        int m=min;
+        while(i<m)
         {
-            auto f1=table1.find(s[i]);
-            auto f2=table2.find(t[i]);
-            if(f1==table1.end()&&f2==table2.end())
+            if(num%i==0)
             {
-                table1[s[i]]=t[i];
-                table2[t[i]]=s[i];
+                sum+=i;
+                int tmp=num/i;
+                sum+=tmp;
             }
-            else if(f1!=table1.end()&&f1->second==t[i]&&f2!=table2.end()&&f2->second==s[i])
-            {
-                continue;
-            }
-            else
+            if(sum>num)
                 return false;
+            i++;
         }
-        return true;
+        return sum==num;
     }
 };
+
+int main()
+{
+    Solution s;
+    s.checkPerfectNumber(6);
+    return 0;
+}
