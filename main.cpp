@@ -1,59 +1,33 @@
-#include "iostream"
 #include "string"
-#include "vector"
+#include "iostream"
 #include "unordered_map"
 
 using namespace std;
 
-
-
 class Solution
 {
 public:
-    vector<int> findAnagrams(string s,string p)
+    bool isIsomorphic(string s,string t)
     {
-        if(s.length()<p.length())
-            return {};
-        unordered_map<char,int> table,table1;
-        vector<int> ret;
-        for(int i=0;i<p.length();i++)
+        if(s.length()!=t.length())
+            return false;
+        unordered_map<char,char> table1,table2;
+        for(int i=0;i<s.length();i++)
         {
-            table[p[i]]++;
-            table1[p[i]]++;
-        }
-        int pL=p.length();
-        for(int p=0,l=0;p<s.length();p++)
-        {
-            while(p==l&&table.find(s[p])==table.end())
+            auto f1=table1.find(s[i]);
+            auto f2=table2.find(t[i]);
+            if(f1==table1.end()&&f2==table2.end())
             {
-                p++;
-                l++;
-                if(p>=s.length())
-                    break;
+                table1[s[i]]=t[i];
+                table2[t[i]]=s[i];
             }
-            auto f=table.find(s[p]);
-            if(f==table.end())
+            else if(f1!=table1.end()&&f1->second==t[i]&&f2!=table2.end()&&f2->second==s[i])
             {
-                l=p+1;
-                table=table1;
                 continue;
             }
-            if(f->second==0)
-            {
-                p=l;
-                l++;
-                table=table1;
-                continue;
-            }
-            int diff=p-l+1;
-            f->second--;
-            if(diff==pL)
-            {
-                ret.push_back(l);
-                table[s[l]]++;
-                l++;
-            }
+            else
+                return false;
         }
-        return ret;
+        return true;
     }
 };
