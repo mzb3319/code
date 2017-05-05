@@ -3,21 +3,31 @@
 
 using namespace std;
 
+struct TreeNode
+{
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+};
+
 class Solution
 {
 public:
-    vector<int> getRow(int rowIndex)
+    bool hasPathSum(TreeNode* root,int sum)
     {
-        vector<vector<int>> ret{{1},{1,1}};
-        for(int i=2;i<=rowIndex;i++)
+        if(root==NULL)
         {
-            ret.push_back({1});
-            for(int j=1;j<i;j++)
-            {
-                ret[i].push_back(ret[i-1][j]+ret[i-1][j-1]);
-            }
-            ret[i].push_back(1);
+            return false;
         }
-        return ret[rowIndex];
+        if(root->left==NULL&&root->right==NULL&&sum==root->val)
+            return true;
+        else
+        {
+            if(hasPathSum(root->left,sum-root->val))
+                return true;
+            if(hasPathSum(root->right,sum-root->val))
+                return true;
+        }
+        return false;
     }
 };
