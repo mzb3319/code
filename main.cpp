@@ -1,36 +1,22 @@
 #include "iostream"
+#include "vector"
 
 using namespace std;
-
-struct ListNode
-{
-    int val;
-    ListNode* next;
-    ListNode(int x):val(x),next(NULL)
-    {}
-};
 
 class Solution
 {
 public:
-    ListNode* removeElements(ListNode* head,int val)
+    void merge(vector<int>& nums1,int m,vector<int>& nums2,int n)
     {
-        ListNode p(0);
-        p.next=head;
-        ListNode *curr=head,*pre=&p;
-        while(curr!=NULL)
+        int len=m+n-1;
+        m--;n--;
+        while(m>=0&&n>=0)
         {
-            if(curr->val==val)
-            {
-                pre->next=curr->next;
-                delete curr;
-            }
-            else
-            {
-                pre=curr;
-            }
-            curr=pre->next;
+            nums1[m]>nums2[n]?nums1[len--]=nums1[m--]:nums1[len--]=nums2[n--];
         }
-        return p.next;
+        while(m>=0)
+            nums1[len--]=nums1[m--];
+        while(n>=0)
+            nums1[len--]=nums2[n--];
     }
 };
