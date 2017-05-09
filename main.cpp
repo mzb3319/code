@@ -1,22 +1,38 @@
 #include "iostream"
-#include "vector"
+#include "string"
+#include "deque"
 
 using namespace std;
 
 class Solution
 {
 public:
-    void merge(vector<int>& nums1,int m,vector<int>& nums2,int n)
+    string addBinary(string a,string b)
     {
-        int len=m+n-1;
-        m--;n--;
-        while(m>=0&&n>=0)
+        int len1=a.length()-1;
+        int len2=b.length()-1;
+        bool carry=false;
+        deque<char> ret;
+        while(len1>=0&&len2>=0)
         {
-            nums1[m]>nums2[n]?nums1[len--]=nums1[m--]:nums1[len--]=nums2[n--];
+            char add=a[len1--]+b[len2--]-'0'-'0'+carry;
+            ret.push_front(add%2+'0');
+            carry=add/2;
         }
-        while(m>=0)
-            nums1[len--]=nums1[m--];
-        while(n>=0)
-            nums1[len--]=nums2[n--];
+        while(len1>=0)
+        {
+            char add=a[len1--]+carry-'0';
+            ret.push_front(add%2+'0');
+            carry=add/2;
+        }
+        while(len2>=0)
+        {
+            char add=b[len2--]+carry-'0';
+            ret.push_front(add%2+'0');
+            carry=add/2;
+        }
+        if(carry)
+            ret.push_front('1');
+        return string(ret.begin(),ret.end());
     }
 };
