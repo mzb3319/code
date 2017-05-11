@@ -1,31 +1,41 @@
 #include "iostream"
+#include "string"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int mySqrt(int x)
+    bool isPalindrome(string s)
     {
-        if(x<1)
-            return 0;
-        int beg=0,end=x;
+        string S;
+        for(char c:s)
+        {
+            if(isalnum(c))
+                S+=toLowercase(c);
+        }
+        int beg=0,end=S.size()-1;
         while(beg<=end)
         {
-            int mid=(beg+end)/2;
-            int sqrt=mid*mid;
-            if(sqrt==x)
-                return mid;
-            else if(sqrt<x)
-            {
-                if((mid+1)*(mid+1)>x)
-                    return mid;
-                else
-                    beg=mid+1;
-            }
-            else
-                end=mid-1;
+            if(S[beg]!=S[end])
+                return false;
+            beg++;
+            end--;
         }
-        return beg;
+        return true;
+    }
+private:
+    char toLowercase(char a)
+    {
+        if(a>='A'&&a<='Z')
+            a=a-'A'+'a';
+        return a;
     }
 };
+
+int main()
+{
+    Solution s;
+    s.isPalindrome("a.");
+    return 0;
+}
