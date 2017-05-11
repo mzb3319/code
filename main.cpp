@@ -1,4 +1,5 @@
 #include "iostream"
+#include "vector"
 #include "string"
 
 using namespace std;
@@ -6,36 +7,15 @@ using namespace std;
 class Solution
 {
 public:
-    bool isPalindrome(string s)
+    string convertToTitle(int n)
     {
-        string S;
-        for(char c:s)
+        string ret;
+        while(n)
         {
-            if(isalnum(c))
-                S+=toLowercase(c);
+            char tmp='A'+(n-1)%26;
+            ret=tmp+ret;
+            n=(n-1)/26;
         }
-        int beg=0,end=S.size()-1;
-        while(beg<=end)
-        {
-            if(S[beg]!=S[end])
-                return false;
-            beg++;
-            end--;
-        }
-        return true;
-    }
-private:
-    char toLowercase(char a)
-    {
-        if(a>='A'&&a<='Z')
-            a=a-'A'+'a';
-        return a;
+        return ret;
     }
 };
-
-int main()
-{
-    Solution s;
-    s.isPalindrome("a.");
-    return 0;
-}
