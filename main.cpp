@@ -1,29 +1,31 @@
 #include "iostream"
-#include "set"
-#include "vector"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int thirdMax(vector<int>& nums)
+    int mySqrt(int x)
     {
-        set<int> table;
-        for(int num:nums)
+        if(x<1)
+            return 0;
+        int beg=0,end=x;
+        while(beg<=end)
         {
-            table.insert(num);
-            if(table.size()>3)
-                table.erase(table.begin());
+            int mid=(beg+end)/2;
+            int sqrt=mid*mid;
+            if(sqrt==x)
+                return mid;
+            else if(sqrt<x)
+            {
+                if((mid+1)*(mid+1)>x)
+                    return mid;
+                else
+                    beg=mid+1;
+            }
+            else
+                end=mid-1;
         }
-        return table.size()==3?*table.begin():*(--table.end());
+        return beg;
     }
 };
-
-int main()
-{
-    vector<int> nums{3,2,1};
-    Solution s;
-    s.thirdMax(nums);
-    return 0;
-}
