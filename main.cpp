@@ -1,21 +1,33 @@
+#include "vector"
 #include "iostream"
+#include "algorithm"
+#include "unordered_map"
 
 using namespace std;
 
 class Solution
 {
 public:
-    uint32_t reverseBits(uint32_t n)
+    int findPairs(vector<int> & nums,int k)
     {
-        uint32_t flag=0;
-        uint32_t ret=0;
-        for(int i=0;i<32;i++)
+        if(k<0)
+            return 0;
+        unordered_map<int,int> ret;
+        int fast=0,slow=0;
+        sort(nums.begin(),nums.end());
+        while(fast<nums.size()&&slow<nums.size())
         {
-            flag=n&1;
-            ret=ret<<1;
-            ret=ret|flag;
-            n=n>>1;
+            int diff=nums[fast]-nums[slow];
+            if(diff==k&&fast!=slow)
+            {
+                ret.insert({nums[slow],nums[fast]});
+                fast++;
+            }
+            else if(diff>k)
+                slow++;
+            else
+                fast++;
         }
-        return ret;
+        return ret.size();
     }
 };
