@@ -1,50 +1,29 @@
-#include "vector"
 #include "iostream"
+#include "set"
+#include "vector"
 
 using namespace std;
 
-class MinStack
+class Solution
 {
 public:
-    MinStack()
-    {}
-
-    void push(int x)
+    int thirdMax(vector<int>& nums)
     {
-        stack.push_back(x);
-        if(min.size()>0)
+        set<int> table;
+        for(int num:nums)
         {
-            x>min.back()?min.push_back(min[min.size()-1]):min.push_back(x);
+            table.insert(num);
+            if(table.size()>3)
+                table.erase(table.begin());
         }
-        else
-            min.push_back(x);
+        return table.size()==3?*table.begin():*(--table.end());
     }
-
-    void pop()
-    {
-        if(stack.size()>0)
-        {
-            stack.pop_back();
-            min.pop_back();
-        }
-    }
-
-    int top()
-    {
-        int ret=0;
-        if(stack.size()>0)
-            ret=stack.back();
-        return ret;
-    }
-
-    int getMin()
-    {
-        int ret=0;
-        if(min.size()>0)
-            ret=min.back();
-        return ret;
-    }
-private:
-    vector<int> stack;
-    vector<int> min;
 };
+
+int main()
+{
+    vector<int> nums{3,2,1};
+    Solution s;
+    s.thirdMax(nums);
+    return 0;
+}
