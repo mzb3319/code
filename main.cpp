@@ -1,33 +1,50 @@
 #include "vector"
 #include "iostream"
-#include "algorithm"
-#include "unordered_map"
 
 using namespace std;
 
-class Solution
+class MinStack
 {
 public:
-    int findPairs(vector<int> & nums,int k)
+    MinStack()
+    {}
+
+    void push(int x)
     {
-        if(k<0)
-            return 0;
-        unordered_map<int,int> ret;
-        int fast=0,slow=0;
-        sort(nums.begin(),nums.end());
-        while(fast<nums.size()&&slow<nums.size())
+        stack.push_back(x);
+        if(min.size()>0)
         {
-            int diff=nums[fast]-nums[slow];
-            if(diff==k&&fast!=slow)
-            {
-                ret.insert({nums[slow],nums[fast]});
-                fast++;
-            }
-            else if(diff>k)
-                slow++;
-            else
-                fast++;
+            x>min.back()?min.push_back(min[min.size()-1]):min.push_back(x);
         }
-        return ret.size();
+        else
+            min.push_back(x);
     }
+
+    void pop()
+    {
+        if(stack.size()>0)
+        {
+            stack.pop_back();
+            min.pop_back();
+        }
+    }
+
+    int top()
+    {
+        int ret=0;
+        if(stack.size()>0)
+            ret=stack.back();
+        return ret;
+    }
+
+    int getMin()
+    {
+        int ret=0;
+        if(min.size()>0)
+            ret=min.back();
+        return ret;
+    }
+private:
+    vector<int> stack;
+    vector<int> min;
 };
