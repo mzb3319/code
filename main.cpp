@@ -1,28 +1,39 @@
-#include "vector"
 #include "iostream"
-#include "string"
+#include "vector"
+#include "algorithm"
 
 using namespace std;
 
 class Solution
 {
 public:
-    string optimalDivision(vector<int>& nums)
+    vector<pair<int,int>> reconstructQueue(vector<pair<int,int>>& people)
     {
-        if(nums.empty())
-            return "";
-        string ret=to_string(nums.front());
-        if(nums.size()>2)
-            ret+="/(";
-        else
-            ret+="/";
-        for(int i=1;i<nums.size();i++)
+        vector<pair<int,int>> ret(people.size(),{INT32_MAX,INT32_MAX});
+        sort(people.begin(),people.end(),[](pair<int,int>& a,pair<int,int>& b){return a.first<b.first;});
+        for(auto& p:people)
         {
-            ret+=to_string(nums[i])+"/";
+            int i=0;
+            int c=p.second;
+            while(c!=0)
+            {
+                if(ret[i].first>=p.first)
+                    c--;
+                i++;
+            }
+            while(ret[i].first!=INT32_MAX)
+                i++;
+            ret[i].first=p.first;
+            ret[i].second=p.second;
         }
-        ret.pop_back();
-        if(nums.size()>2)
-            ret+=")";
         return ret;
     }
 };
+
+int main()
+{
+    vector<pair<int,int>> peo{{7,0},{4,4},{7,1},{5,0},{6,1},{5,2}};
+    Solution s;
+    s.reconstructQueue(peo);
+    return 0;
+}
