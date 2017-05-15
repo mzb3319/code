@@ -3,43 +3,21 @@
 
 using namespace std;
 
-struct TreeNode
-{
-    int val;
-    TreeNode* left;
-    TreeNode* right;
-};
-
 class Solution
 {
 public:
-    int pathSum(TreeNode* root,int sum)
+    int countBattleships(vector<vector<char>>& board)
     {
-        vector<int> path;
         int ret=0;
-        core(root,path,ret,sum);
-        return ret;
-    }
-private:
-    void core(TreeNode* node,vector<int>& path,int &ret,int k)
-    {
-        if(node==NULL)
-            return;
-        path.push_back(node->val);
-        ret+=findSum(path,k);
-        core(node->left,path,ret,k);
-        core(node->right,path,ret,k);
-        path.pop_back();
-    }
-    int findSum(vector<int>& path,int k)
-    {
-        int sum=0;
-        int ret=0;
-        for(int i=path.size()-1;i>=0;i--)
+        if(board.size()==0||board[0].size()==0)
+            return 0;
+        for(int i=0;i<board.size();i++)
         {
-            sum+=path[i];
-            if(sum==k)
-                ret++;
+            for(int j=0;j<board[0].size();j++)
+            {
+                if(board[i][j]=='X'&&(i==0||board[i-1][j]!='X')&&(j==0||board[i][j-1]!='X'))
+                    ret++;
+            }
         }
         return ret;
     }
