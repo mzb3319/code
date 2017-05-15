@@ -1,28 +1,25 @@
 #include "iostream"
 #include "string"
+#include "vector"
 
 using namespace std;
-
 
 class Solution
 {
 public:
-    string complexNumberMultiply(string a,string b)
+    int countBattleships(vector<vector<char>>& board)
     {
-        int a1=0,b1=0,a2=0,b2=0;
-        auto f=a.find('+');
-        string tmp;
-        tmp=a.substr(0,f);
-        a1=stoi(tmp);
-        tmp=a.substr(f+1,a.size()-f-2);
-        a2=stoi(tmp);
-        f=b.find('+');
-        tmp=b.substr(0,f);
-        b1=stoi(tmp);
-        tmp=b.substr(f+1,b.size()-f-2);
-        b2=stoi(tmp);
-        int r=a1*b1-a2*b2;
-        int i=a1*b2+a2*b1;
-        return to_string(r)+'+'+to_string(i)+'i';
+        int ret=0;
+        if(board.size()==0||board[0].size()==0)
+            return 0;
+        for(int i=0;i<board.size();i++)
+        {
+            for(int j=0;j<board[0].size();j++)
+            {
+                if(board[i][j]=='X'&&(i==0||board[i-1][j]!='X')&&(j==0||board[i][j-1]!='X'))
+                    ret++;
+            }
+        }
+        return ret;
     }
 };
