@@ -1,25 +1,46 @@
+#include "deque"
 #include "iostream"
-#include "string"
-#include "vector"
 
 using namespace std;
+
+struct TreeNode
+{
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+
+};
+
 
 class Solution
 {
 public:
-    int countBattleships(vector<vector<char>>& board)
+    int findBottomLeftValue(TreeNode* root)
     {
-        int ret=0;
-        if(board.size()==0||board[0].size()==0)
-            return 0;
-        for(int i=0;i<board.size();i++)
+        deque<TreeNode*> table;
+        TreeNode* first=NULL;
+        table.push_back(root);
+        int count=1;
+        while(!table.empty())
         {
-            for(int j=0;j<board[0].size();j++)
+            int c=0;
+            first=table.front();
+            for(;count>0;count--)
             {
-                if(board[i][j]=='X'&&(i==0||board[i-1][j]!='X')&&(j==0||board[i][j-1]!='X'))
-                    ret++;
+                if(table.front()->left!=NULL)
+                {
+                    table.push_back(table.front()->left);
+                    c++;
+                }
+                if(table.front()->right!=NULL)
+                {
+                    table.push_back(table.front()->right);
+                    c++;
+                }
+                table.pop_front();
             }
+            count=c;
         }
-        return ret;
+        return first->val;
     }
 };
