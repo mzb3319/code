@@ -1,46 +1,28 @@
-#include "deque"
+#include "vector"
 #include "iostream"
+#include "string"
 
 using namespace std;
-
-struct TreeNode
-{
-    int val;
-    TreeNode* left;
-    TreeNode* right;
-
-};
-
 
 class Solution
 {
 public:
-    int findBottomLeftValue(TreeNode* root)
+    string optimalDivision(vector<int>& nums)
     {
-        deque<TreeNode*> table;
-        TreeNode* first=NULL;
-        table.push_back(root);
-        int count=1;
-        while(!table.empty())
+        if(nums.empty())
+            return "";
+        string ret=to_string(nums.front());
+        if(nums.size()>2)
+            ret+="/(";
+        else
+            ret+="/";
+        for(int i=1;i<nums.size();i++)
         {
-            int c=0;
-            first=table.front();
-            for(;count>0;count--)
-            {
-                if(table.front()->left!=NULL)
-                {
-                    table.push_back(table.front()->left);
-                    c++;
-                }
-                if(table.front()->right!=NULL)
-                {
-                    table.push_back(table.front()->right);
-                    c++;
-                }
-                table.pop_front();
-            }
-            count=c;
+            ret+=to_string(nums[i])+"/";
         }
-        return first->val;
+        ret.pop_back();
+        if(nums.size()>2)
+            ret+=")";
+        return ret;
     }
 };
