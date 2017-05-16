@@ -1,30 +1,31 @@
 #include "iostream"
 #include "vector"
-#include "algorithm"
 
 using namespace std;
 
 class Solution
 {
 public:
-    vector<pair<int,int>> reconstructQueue(vector<pair<int,int>>& people)
+    vector<vector<int>> matrixReshape(vector<vector<int>> & nums,int r,int c)
     {
-        vector<pair<int,int>> ret(people.size(),{INT32_MAX,INT32_MAX});
-        sort(people.begin(),people.end(),[](pair<int,int>& a,pair<int,int>& b){return a.first<b.first;});
-        for(auto& p:people)
+        if(nums.empty()||nums[0].empty()||nums.size()*nums[0].size()!=r*c)
+            return nums;
+        vector<vector<int>> ret;
+        vector<int> tmp;
+        int count=0;
+        for(int i=0;i<nums.size();i++)
         {
-            int i=0;
-            int c=p.second;
-            while(c!=0)
+            for(int j=0;j<nums[0].size();j++)
             {
-                if(ret[i].first>=p.first)
-                    c--;
-                i++;
+                tmp.push_back(nums[i][j]);
+                count++;
+                if(count==c)
+                {
+                    ret.push_back(tmp);
+                    tmp.clear();
+                    count=0;
+                }
             }
-            while(ret[i].first!=INT32_MAX)
-                i++;
-            ret[i].first=p.first;
-            ret[i].second=p.second;
         }
         return ret;
     }
@@ -32,8 +33,8 @@ public:
 
 int main()
 {
-    vector<pair<int,int>> peo{{7,0},{4,4},{7,1},{5,0},{6,1},{5,2}};
+    vector<vector<int>> table{{1,2},{3,4}};
     Solution s;
-    s.reconstructQueue(peo);
+    s.matrixReshape(table,4,1);
     return 0;
 }
