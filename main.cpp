@@ -1,29 +1,54 @@
+#include <vector>
 #include "iostream"
-#include "vector"
+#include "deque"
 
 using namespace std;
+
+struct TreeNode
+{
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+
+};
 
 class Solution
 {
 public:
-    vector<int> findDuplicates(vector<int>& nums)
+    vector<int> largestValues(TreeNode* root)
     {
+        if(root==NULL)
+            return {};
+        int currC=1,nextC=0;
         vector<int> ret;
-        for(int num:nums)
+        deque<TreeNode*> tree{root};
+        int max=root->val;
+        while(!tree.empty())
         {
-            if(num<0)
+            if(currC>0)
             {
-                if(nums[-1-num]<0)
-                    ret.push_back(-num);
-                else
-                    nums[-1-num]=-nums[-1-num];
+                if(tree.front()->val>max)
+                    max=tree.front()->val;
+                if(tree.front()->left!=NULL)
+                {
+                    nextC++;
+                    tree.push_back(tree.front()->left);
+                }
+                if(tree.front()->right!=NULL)
+                {
+                    nextC++;
+                    tree.push_back(tree.front()->right);
+                }
+                currC--;
+                if(currC==0)
+                    ret.push_back(max);
+                tree.pop_front();
             }
             else
             {
-                if(nums[num-1]<0)
-                    ret.push_back(num);
-                else
-                    nums[num-1]=-nums[num-1];
+                max=INT32_MIN;
+                currC=nextC;
+                nextC=0;
             }
         }
         return ret;
