@@ -6,30 +6,24 @@ using namespace std;
 class Solution
 {
 public:
-    int numberOfArithmeticSlices(vector<int>& A)
+    vector<int> findDuplicates(vector<int>& nums)
     {
-        if(A.size()<3)
-            return 0;
-        int ret=0;
-        int count=1;
-        int diff=A[1]-A[0];
-        for(int i=1;i<A.size();i++)
+        vector<int> ret;
+        for(int num:nums)
         {
-            int d=A[i]-A[i-1];
-            if(d==diff)
+            if(num<0)
             {
-                count++;
-                if(i==A.size()-1&&count>=3)
-                    ret+=(count-1)*(count-2)/2;
+                if(nums[-1-num]<0)
+                    ret.push_back(-num);
+                else
+                    nums[-1-num]=-nums[-1-num];
             }
             else
             {
-                if(count>=3)
-                {
-                    ret+=(count-1)*(count-2)/2;
-                }
-                diff=d;
-                count=2;
+                if(nums[num-1]<0)
+                    ret.push_back(num);
+                else
+                    nums[num-1]=-nums[num-1];
             }
         }
         return ret;
