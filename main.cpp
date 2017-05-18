@@ -1,24 +1,46 @@
 #include "iostream"
 #include "vector"
+#include "unordered_map"
 
 using namespace std;
+
+struct TreeNode
+{
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+};
 
 class Solution
 {
 public:
-    int findPoisonedDuration(vector<int>& timeSeries,int duration)
+    vector<int> findFrequentTreeSum(TreeNode* root)
     {
-        int ret=0,begin=0,end=0;
-        for(int time:timeSeries)
+        unordered_map<int,int> table;
+        core(root,table);
+        int max=INT32_MIN;
+        for(auto t:table)
         {
-            if(time>=end)
-            {
-                ret+=(end-begin);
-                begin=time;
-            }
-            end=time+duration;
+            if(t.second>max)
+                max=t.second;
         }
-        ret+=end-begin;
+        vector<int> ret;
+        for(auto t:table)
+        {
+            if(t.second==max)
+                ret.push_back(t.first);
+        }
         return ret;
+    }
+private:
+    int core(TreeNode* node,unordered_map<int,int>& table)
+    {
+        if(node==NULL)
+            return 0;
+        int left=core(node->left,table);
+        int right=core(node->right,table);
+        int sum=node->val+left+right;
+        table[sum]++;
+        return sum;
     }
 };
