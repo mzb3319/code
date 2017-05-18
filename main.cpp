@@ -1,59 +1,36 @@
 #include "iostream"
+#include "unordered_map"
+#include "string"
+#include "algorithm"
 #include "vector"
+
 
 using namespace std;
 
 class Solution
 {
 public:
-    vector<vector<char>> updateBoard(vector<vector<char>>& board,vector<int>& click)
+    string frequencySort(string s)
     {
-        if(board[click[0]][click[1]]=='M')
+        vector<string> table(256);
+        for(char c:s)
         {
-            board[click[0]][click[1]]='X';
-            return board;
+            table[c]+=c;
         }
-        core(board,click);
-        return board;
-    }
-private:
-    void core(vector<vector<char>>& board,vector<int> pos)
-    {
-        int x=pos[0],y=pos[1];
-        if(x<0||y<0||x>=board.size()||y>=board[0].size())
-            return;
-        if(board[x][y]=='E')
+        string ret;
+        sort(table.begin(),table.end(),[](string& a,string& b){return a.length()>b.length();});
+        for(string &str:table)
         {
-            board[x][y] = 'B';
-            int count = 0;
-            if (x - 1 >= 0 && board[x - 1][y] == 'M')//top
-                count++;
-            if (x + 1 < board.size() && board[x + 1][y] == 'M')//bottom
-                count++;
-            if (y - 1 >= 0 && board[x][y - 1] == 'M')//left
-                count++;
-            if (y + 1 < board[0].size() && board[x][y + 1] == 'M')//right
-                count++;
-            if (x - 1 >= 0 && y - 1 >= 0 && board[x - 1][y - 1] == 'M')//left-top
-                count++;
-            if (x - 1 >= 0 && y + 1 < board[0].size() && board[x - 1][y + 1] == 'M')//right-top
-                count++;
-            if (x + 1 < board.size() && y - 1 >= 0 && board[x + 1][y - 1] == 'M')//left-bottom
-                count++;
-            if (x + 1 < board.size() && y + 1 < board[0].size() && board[x + 1][y + 1] == 'M')//right-bottom
-                count++;
-            if (count)
-                board[x][y] = '0' + count;
-            else {
-                core(board, {x - 1, y});
-                core(board, {x + 1, y});
-                core(board, {x, y - 1});
-                core(board, {x, y + 1});
-                core(board, {x - 1, y - 1});
-                core(board, {x - 1, y + 1});
-                core(board, {x + 1, y - 1});
-                core(board, {x + 1, y + 1});
-            }
+            if(!str.empty())
+                ret+=str;
         }
+        return ret;
     }
 };
+
+int main()
+{
+    Solution s;
+    cout<<s.frequencySort("1223456")<<endl;
+    return 0;
+}
