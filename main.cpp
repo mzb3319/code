@@ -1,31 +1,24 @@
 #include "iostream"
+#include "vector"
 
 using namespace std;
-
-struct TreeNode
-{
-    int val;
-    TreeNode* left;
-    TreeNode* right;
-
-};
-
 
 class Solution
 {
 public:
-    TreeNode* convertBST(TreeNode* root)
+    int findPoisonedDuration(vector<int>& timeSeries,int duration)
     {
-        core(root,0);
-        return root;
-    }
-private:
-    int core(TreeNode* node,int carry)
-    {
-        if(node==NULL)
-            return carry;
-        node->val+=core(node->right,carry);
-        int left=core(node->left,node->val);
-        return left;
+        int ret=0,begin=0,end=0;
+        for(int time:timeSeries)
+        {
+            if(time>=end)
+            {
+                ret+=(end-begin);
+                begin=time;
+            }
+            end=time+duration;
+        }
+        ret+=end-begin;
+        return ret;
     }
 };
