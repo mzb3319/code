@@ -6,29 +6,21 @@ using namespace std;
 class Solution
 {
 public:
-    int findCircleNum(vector<vector<int>>& M)
+    vector<int> productExceptSelf(vector<int>& nums)
     {
-        vector<int> flag(M.size(),0);
-        int ret=0;
-        for(int i=0;i<M.size();i++)
+        vector<int> ret(nums.size(),1);
+        int muti=1;
+        for(int i=0;i<nums.size();i++)
         {
-            if(flag[i])
-                continue;
-            ret++;
-            core(M,i,flag);
+            ret[i]=muti;
+            muti*=nums[i];
+        }
+        muti=1;
+        for(int i=nums.size()-1;i>=0;i--)
+        {
+            ret[i]*=muti;
+            muti*=nums[i];
         }
         return ret;
-    }
-private:
-    void core(vector<vector<int>>& M,int i,vector<int>& flag)
-    {
-        if(flag[i])
-            return;
-        flag[i]=1;
-        for(int j=0;j<M[i].size();j++)
-        {
-            if(M[i][j])
-                core(M,j,flag);
-        }
     }
 };
