@@ -1,36 +1,31 @@
 #include "iostream"
-#include "unordered_map"
-#include "string"
-#include "algorithm"
 #include "vector"
-
 
 using namespace std;
 
 class Solution
 {
 public:
-    string frequencySort(string s)
+    vector<int> singleNumber(vector<int>& nums)
     {
-        vector<string> table(256);
-        for(char c:s)
+        int base=nums[0];
+        for(int i=1;i<nums.size();i++)
         {
-            table[c]+=c;
+            base^=nums[i];
         }
-        string ret;
-        sort(table.begin(),table.end(),[](string& a,string& b){return a.length()>b.length();});
-        for(string &str:table)
+        int a=0,b=0;
+        base=(base&(base-1))^base;
+        for(int num:nums)
         {
-            if(!str.empty())
-                ret+=str;
+            if(base&num)
+            {
+                a^=num;
+            }
+            else
+            {
+                b^=num;
+            }
         }
-        return ret;
+        return {a,b};
     }
 };
-
-int main()
-{
-    Solution s;
-    cout<<s.frequencySort("1223456")<<endl;
-    return 0;
-}
