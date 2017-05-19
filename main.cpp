@@ -6,26 +6,29 @@ using namespace std;
 class Solution
 {
 public:
-    vector<int> singleNumber(vector<int>& nums)
+    int findCircleNum(vector<vector<int>>& M)
     {
-        int base=nums[0];
-        for(int i=1;i<nums.size();i++)
+        vector<int> flag(M.size(),0);
+        int ret=0;
+        for(int i=0;i<M.size();i++)
         {
-            base^=nums[i];
+            if(flag[i])
+                continue;
+            ret++;
+            core(M,i,flag);
         }
-        int a=0,b=0;
-        base=(base&(base-1))^base;
-        for(int num:nums)
+        return ret;
+    }
+private:
+    void core(vector<vector<int>>& M,int i,vector<int>& flag)
+    {
+        if(flag[i])
+            return;
+        flag[i]=1;
+        for(int j=0;j<M[i].size();j++)
         {
-            if(base&num)
-            {
-                a^=num;
-            }
-            else
-            {
-                b^=num;
-            }
+            if(M[i][j])
+                core(M,j,flag);
         }
-        return {a,b};
     }
 };
