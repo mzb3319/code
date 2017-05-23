@@ -1,26 +1,45 @@
 #include "iostream"
-#include "vector"
+#include "random"
 
 using namespace std;
+
+struct ListNode
+{
+    int val;
+    ListNode* next;
+
+};
 
 class Solution
 {
 public:
-    vector<int> nextGreaterElements(vector<int> & nums)
+    Solution(ListNode* head)
     {
-        vector<int> table,ret(nums.size(),-1);
-        int len=nums.size();
-        for(int i=0;i<2*len;i++)
+        int len=0;
+        node=head;
+        while(node!=NULL)
         {
-            int num=nums[i%len];
-            while(!table.empty()&&nums[table.back()]<num)
-            {
-                ret[table.back()]=num;
-                table.pop_back();
-            }
-            if(i<len)
-                table.push_back(i);
+            len++;
+            node=node->next;
         }
-        return ret;
+        node=head;
+        uniform_int_distribution<unsigned >::param_type param(0,len-1);
+        u.param(param);
+        e.seed(time(0));
     }
+    int getRandom()
+    {
+        ListNode* h=node;
+        int step=u(e);
+        while(step)
+        {
+            h=h->next;
+            step--;
+        }
+        return h->val;
+    }
+private:
+    uniform_int_distribution<unsigned > u;
+    default_random_engine e;
+    ListNode* node;
 };
