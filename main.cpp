@@ -3,80 +3,52 @@
 
 using namespace std;
 
+struct ListNode
+{
+    int val;
+    ListNode* next;
+    ListNode(int a):val(a),next(NULL)
+    {}
+};
+
 class Solution
 {
 public:
-    vector<int> findDiagonalOrder(vector<vector<int>>& matrix)
+    ListNode* addTwoNumbers(ListNode* l1,ListNode* l2)
     {
-        if(matrix.empty()||matrix[0].empty())
-            return {};
-        int row=0,col=0;
-        int count=matrix.size()*matrix[0].size();
-        vector<int> ret;
-        while(count)
+        vector<int> num1,num2;
+        ListNode* node=l1;
+        while(node!=NULL)
         {
-            getPos(row,col,matrix);
-            ret.push_back(matrix[row][col]);
-            count--;
-            if(downOrUp)
-            {
-                row--;col++;
-            }
-            else
-            {
-                row++;col--;
-            }
+            num1.push_back(node->val);
+            node=node->next;
+        }
+        node=l2;
+        while(node!=NULL)
+        {
+            num2.push_back(node->val);
+            node=node->next;
+        }
+        int carry=0;
+        ListNode* ret=NULL;
+        for(int i=num1.size()-1,j=num2.size()-1;i>=0||j>=0;i--,j--)
+        {
+            int add=carry;
+            if(i>=0)
+                add+=num1[i];
+            if(j>=0)
+                add+=num2[j];
+            carry=add/10;
+            ListNode* n=new ListNode(add%10);
+            n->next=ret;
+            ret=n;
+        }
+        if(carry)
+        {
+            ListNode* n=new ListNode(carry);
+            n->next=ret;
+            ret=n;
         }
         return ret;
     }
-
-private:
-    void getPos(int &i,int &j,vector<vector<int>>& matrix)
-    {
-        if(i>=0&&i<matrix.size()&&j>=0&&j<matrix[0].size())
-            return;
-        if(downOrUp)
-        {
-            i++;j--;
-            if(j+1<matrix[0].size())
-            {
-                j++;
-                downOrUp=false;
-                return;
-            }
-            else
-            {
-                i++;
-                downOrUp=false;
-                return;
-            }
-        }
-        else
-        {
-            i--;j++;
-            if(i+1<matrix.size())
-            {
-                i++;
-                downOrUp=true;
-                return;
-            }
-            else
-            {
-                j++;
-                downOrUp=true;
-                return;
-            }
-        }
-    }
-
-private:
-    bool downOrUp=true;//true->up,false->down
 };
-
-int main()
-{
-    vector<vector<int>> m{{1,2,3},{4,5,6},{7,8,9}};
-    Solution s;
-    s.findDiagonalOrder(m);
-    return 0;
-}
