@@ -1,54 +1,40 @@
 #include "iostream"
 #include "vector"
+#include "unordered_map"
 
 using namespace std;
-
-struct ListNode
-{
-    int val;
-    ListNode* next;
-    ListNode(int a):val(a),next(NULL)
-    {}
-};
 
 class Solution
 {
 public:
-    ListNode* addTwoNumbers(ListNode* l1,ListNode* l2)
+    vector<int> killProcess(vector<int>& pid,vector<int>& ppid,int kill)
     {
-        vector<int> num1,num2;
-        ListNode* node=l1;
-        while(node!=NULL)
+        unordered_map<int,vector<int>> table;
+        for(int i=0;i<pid.size();i++)
         {
-            num1.push_back(node->val);
-            node=node->next;
+            table[ppid[i]].push_back(pid[i]);
         }
-        node=l2;
-        while(node!=NULL)
-        {
-            num2.push_back(node->val);
-            node=node->next;
-        }
-        int carry=0;
-        ListNode* ret=NULL;
-        for(int i=num1.size()-1,j=num2.size()-1;i>=0||j>=0;i--,j--)
-        {
-            int add=carry;
-            if(i>=0)
-                add+=num1[i];
-            if(j>=0)
-                add+=num2[j];
-            carry=add/10;
-            ListNode* n=new ListNode(add%10);
-            n->next=ret;
-            ret=n;
-        }
-        if(carry)
-        {
-            ListNode* n=new ListNode(carry);
-            n->next=ret;
-            ret=n;
-        }
+        vector<int> ret{kill};
+        core(table,kill,ret);
         return ret;
     }
+private:
+    void core(unordered_map<int,vector<int>>& table,int kill,vector<int>& ret)
+    {
+        auto kl=table[kill];
+        for(int i=0;i<kl.size();i++)
+        {
+            ret.push_back(kl[i]);
+            core(table,kl[i],ret);
+        }
+    }
 };
+
+int main()
+{
+    vector<int> pid{1,3,10,5};
+    vector<int> ppid{3,0,5,3};
+    Solution s;
+    s.killProcess(pid,ppid,5);
+    return 0;
+}
