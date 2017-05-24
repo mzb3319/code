@@ -1,40 +1,37 @@
 #include "iostream"
 #include "vector"
-#include "unordered_map"
+#include "random"
 
 using namespace std;
 
 class Solution
 {
 public:
-    vector<int> killProcess(vector<int>& pid,vector<int>& ppid,int kill)
+    Solution(vector<int> nums)
     {
-        unordered_map<int,vector<int>> table;
-        for(int i=0;i<pid.size();i++)
+        origin=shuffleNums=nums;
+        e.seed(time(0));
+        uniform_int_distribution<unsigned>::param_type param{0,nums.size()-1};
+        u.param(param);
+    }
+    vector<int> reset()
+    {
+        shuffleNums=origin;
+        return shuffleNums;
+    }
+    vector<int> shuffle()
+    {
+        for(int i=0;i<shuffleNums.size();i++)
         {
-            table[ppid[i]].push_back(pid[i]);
+            int swap=u(e);
+            int tmp=shuffleNums[i];
+            shuffleNums[i]=shuffleNums[swap];
+            shuffleNums[swap]=tmp;
         }
-        vector<int> ret{kill};
-        core(table,kill,ret);
-        return ret;
+        return shuffleNums;
     }
 private:
-    void core(unordered_map<int,vector<int>>& table,int kill,vector<int>& ret)
-    {
-        auto kl=table[kill];
-        for(int i=0;i<kl.size();i++)
-        {
-            ret.push_back(kl[i]);
-            core(table,kl[i],ret);
-        }
-    }
+    vector<int> origin,shuffleNums;
+    uniform_int_distribution<unsigned> u;
+    default_random_engine e;
 };
-
-int main()
-{
-    vector<int> pid{1,3,10,5};
-    vector<int> ppid{3,0,5,3};
-    Solution s;
-    s.killProcess(pid,ppid,5);
-    return 0;
-}
