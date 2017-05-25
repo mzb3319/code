@@ -1,34 +1,40 @@
 #include "iostream"
+#include "string"
 #include "vector"
+#include "algorithm"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int integerBreak(int n)
+    int findMinDifference(vector<string>& timePoints)
     {
-        vector<int> table{0,1};
-        for(int i=2;i<=n;i++)
+        sort(timePoints.begin(),timePoints.end());
+        int diff=INT32_MAX;
+        for(int i=1;i<timePoints.size();i++)
         {
-            int tmp=INT32_MIN;
-            for(int k=1;k<i;k++)
-            {
-                int t=k*table[i-k];
-                if(t>tmp)
-                    tmp=t;
-            }
-            if(i!=n&&tmp<i)
-                tmp=i;
-            table.push_back(tmp);
+            if(timePoints[i]==timePoints[i-1])
+                return 0;
+            int h1=stoi(timePoints[i]);
+            int h2=stoi(timePoints[i-1]);
+            int m1=stoi(timePoints[i].substr(3,2));
+            int m2=stoi(timePoints[i-1].substr(3,2));
+            int d=(h1-h2)*60+m1-m2;
+            if(d<diff)
+                diff=d;
         }
-        return table.back();
+        int d=(23-stoi(timePoints.back()))*60+60-stoi(timePoints.back().substr(3,2))+stoi(timePoints.front())*60+stoi(timePoints.front().substr(3,2));
+        if(d<diff)
+            diff=d;
+        return diff;
     }
 };
 
 int main()
 {
     Solution s;
-    cout<<s.integerBreak(2)<<endl;
+    vector<string> time{"12:12","00:13"};
+    s.findMinDifference(time);
     return 0;
 }
