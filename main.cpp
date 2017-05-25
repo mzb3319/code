@@ -4,26 +4,44 @@
 
 using namespace std;
 
+struct TreeNode
+{
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+};
+
 class Solution
 {
 public:
-    int fourSumCount(vector<int>& A,vector<int>& B,vector<int>& C,vector<int>& D)
+    vector<int> inorderTraversal(TreeNode* root)
     {
-        unordered_map<int,int> table1,table2;
-        for(int i=0;i<A.size();i++)
+        if(root==NULL)
+            return {};
+        vector<int> ret;
+        vector<TreeNode*> tree{root};
+        vector<pair<bool,bool>> help{{1,1}};
+        while(!tree.empty())
         {
-            for(int j=0;j<B.size();j++)
+            while(help.back().first&&tree.back()->left!=NULL)
             {
-                table1[A[i]+B[j]]++;
-                table2[C[i]+D[j]]++;
+                tree.push_back(tree.back()->left);
+                help.back().first=0;
+                help.push_back({1,1});
+                continue;
             }
-        }
-        int ret=0;
-        for(auto itr1:table1)
-        {
-            auto f=table2.find(-itr1.first);
-            if(f!=table2.end())
-                ret+=itr1.second*f->second;
+            help.back().first=0;
+            if(help.back().second)
+                ret.push_back(tree.back()->val);
+            if(help.back().second&&tree.back()->right!=NULL)
+            {
+                tree.push_back(tree.back()->right);
+                help.back().second=0;
+                help.push_back({1,1});
+                continue;
+            }
+            tree.pop_back();
+            help.pop_back();
         }
         return ret;
     }
