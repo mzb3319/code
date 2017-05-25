@@ -1,48 +1,34 @@
 #include "iostream"
 #include "vector"
-#include "unordered_map"
 
 using namespace std;
-
-struct TreeNode
-{
-    int val;
-    TreeNode* left;
-    TreeNode* right;
-};
 
 class Solution
 {
 public:
-    vector<int> inorderTraversal(TreeNode* root)
+    int integerBreak(int n)
     {
-        if(root==NULL)
-            return {};
-        vector<int> ret;
-        vector<TreeNode*> tree{root};
-        vector<pair<bool,bool>> help{{1,1}};
-        while(!tree.empty())
+        vector<int> table{0,1};
+        for(int i=2;i<=n;i++)
         {
-            while(help.back().first&&tree.back()->left!=NULL)
+            int tmp=INT32_MIN;
+            for(int k=1;k<i;k++)
             {
-                tree.push_back(tree.back()->left);
-                help.back().first=0;
-                help.push_back({1,1});
-                continue;
+                int t=k*table[i-k];
+                if(t>tmp)
+                    tmp=t;
             }
-            help.back().first=0;
-            if(help.back().second)
-                ret.push_back(tree.back()->val);
-            if(help.back().second&&tree.back()->right!=NULL)
-            {
-                tree.push_back(tree.back()->right);
-                help.back().second=0;
-                help.push_back({1,1});
-                continue;
-            }
-            tree.pop_back();
-            help.pop_back();
+            if(i!=n&&tmp<i)
+                tmp=i;
+            table.push_back(tmp);
         }
-        return ret;
+        return table.back();
     }
 };
+
+int main()
+{
+    Solution s;
+    cout<<s.integerBreak(2)<<endl;
+    return 0;
+}
