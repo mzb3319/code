@@ -1,37 +1,30 @@
 #include "iostream"
 #include "vector"
-#include "random"
+#include "unordered_map"
 
 using namespace std;
 
 class Solution
 {
 public:
-    Solution(vector<int> nums)
+    int fourSumCount(vector<int>& A,vector<int>& B,vector<int>& C,vector<int>& D)
     {
-        origin=shuffleNums=nums;
-        e.seed(time(0));
-        uniform_int_distribution<unsigned>::param_type param{0,nums.size()-1};
-        u.param(param);
-    }
-    vector<int> reset()
-    {
-        shuffleNums=origin;
-        return shuffleNums;
-    }
-    vector<int> shuffle()
-    {
-        for(int i=0;i<shuffleNums.size();i++)
+        unordered_map<int,int> table1,table2;
+        for(int i=0;i<A.size();i++)
         {
-            int swap=u(e);
-            int tmp=shuffleNums[i];
-            shuffleNums[i]=shuffleNums[swap];
-            shuffleNums[swap]=tmp;
+            for(int j=0;j<B.size();j++)
+            {
+                table1[A[i]+B[j]]++;
+                table2[C[i]+D[j]]++;
+            }
         }
-        return shuffleNums;
+        int ret=0;
+        for(auto itr1:table1)
+        {
+            auto f=table2.find(-itr1.first);
+            if(f!=table2.end())
+                ret+=itr1.second*f->second;
+        }
+        return ret;
     }
-private:
-    vector<int> origin,shuffleNums;
-    uniform_int_distribution<unsigned> u;
-    default_random_engine e;
 };
