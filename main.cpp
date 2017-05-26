@@ -6,31 +6,29 @@ using namespace std;
 class Solution
 {
 public:
-    int magicalString(int n)
+    bool PredictTheWinner(vector<int>& nums)
     {
-        if(!n)
-            return 0;
-        int ret=1;
-        vector<int> ms{1};
-        vector<int> table{0,2,1};
-        int index=0,preChar=1,dum=1;
-        while(ms.size()<n)
+        int table[20][20];
+        int all=0;
+        for(int i=0;i<nums.size();i++)
         {
-            if(ms[index]==dum)//change a num to add
-            {
-                ms.push_back(table[preChar]);
-                dum=1;
-                index++;
-            }
-            else
-            {
-                ms.push_back(preChar);
-                dum++;
-            }
-            preChar=ms.back();
-            if(preChar==1)
-                ret++;
+            table[i][i]=nums[i];
+            all+=nums[i];
         }
-        return ret;
+        for(int i=2;i<=nums.size();i++)
+        {
+            for(int j=0;j<=nums.size()-i;j++)
+            {
+                int end=j+i-1;
+                int add=0;
+                for(int k=j;k<=end;k++)
+                    add+=nums[k];
+                int m=min(table[j+1][end],table[j][end-1]);
+                table[j][end]=add-m;
+            }
+        }
+        if(table[0][nums.size()-1]>=(all/2+all%2))
+            return true;
+        return false;
     }
 };
