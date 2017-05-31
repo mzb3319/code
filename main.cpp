@@ -3,36 +3,32 @@
 
 using namespace std;
 
-struct TreeNode
-{
-    int val;
-    TreeNode* left;
-    TreeNode* right;
-
-};
-
 class Solution
 {
 public:
-    vector<int> preorderTraversal(TreeNode* root)
+    vector<vector<int>> combinationSum3(int k,int n)
     {
-        vector<TreeNode*> table{root};
-        vector<int> ret;
-        core(table,ret);
+        vector<vector<int>> ret;
+        vector<int> tmp;
+        core(k,n,1,0,ret,tmp);
         return ret;
     }
 private:
-    void core(vector<TreeNode*>& table,vector<int>& ret)
+    void core(int k,int n,int beg,int add,vector<vector<int>>& ret,vector<int>&tmp)
     {
-        while(!table.empty())
+        if(k==0)
         {
-            TreeNode* node=table.back();
-            table.pop_back();
-            if(node==NULL)
-                continue;
-            ret.push_back(node->val);
-            table.push_back(node->right);
-            table.push_back(node->left);
+            if(add==n)
+                ret.push_back(tmp);
+        }
+        else
+        {
+            for(int i=beg;i<=9;i++)
+            {
+                tmp.push_back(i);
+                core(k-1,n,i+1,add+i,ret,tmp);
+                tmp.pop_back();
+            }
         }
     }
 };
