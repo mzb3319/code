@@ -1,4 +1,5 @@
 #include "iostream"
+#include "string"
 #include "vector"
 
 using namespace std;
@@ -6,29 +7,30 @@ using namespace std;
 class Solution
 {
 public:
-    vector<vector<int>> combinationSum3(int k,int n)
+    int minDistance(string &word1,string &word2)
     {
-        vector<vector<int>> ret;
-        vector<int> tmp;
-        core(k,n,1,0,ret,tmp);
-        return ret;
-    }
-private:
-    void core(int k,int n,int beg,int add,vector<vector<int>>& ret,vector<int>&tmp)
-    {
-        if(k==0)
+        int len1=word1.length(),len2=word2.length();
+        vector<vector<int>> table(len1+1,vector<int>(len2+1,0));
+        for(int i=1;i<=len1;i++)
         {
-            if(add==n)
-                ret.push_back(tmp);
-        }
-        else
-        {
-            for(int i=beg;i<=9;i++)
+            for(int j=1;j<=len2;j++)
             {
-                tmp.push_back(i);
-                core(k-1,n,i+1,add+i,ret,tmp);
-                tmp.pop_back();
+                if(word1[i-1]==word2[j-1])
+                    table[i][j]=table[i-1][j-1]+1;
+                else if(table[i-1][j]>table[i][j-1])
+                    table[i][j]=table[i-1][j];
+                else
+                    table[i][j]=table[i][j-1];
             }
         }
+        return len1+len2-2*table[len1][len2];
     }
 };
+
+int main()
+{
+    string a="sea",b="eat";
+    Solution s;
+    s.minDistance(a,b);
+    return 0;
+}
