@@ -1,29 +1,38 @@
 #include "iostream"
 #include "vector"
-#include "string"
 
 using namespace std;
+
+struct TreeNode
+{
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+
+};
 
 class Solution
 {
 public:
-    bool isSubsequence(string &s,string &t)
+    vector<int> preorderTraversal(TreeNode* root)
     {
-        int i=0,j=0;
-        for(;i<s.length();)
+        vector<TreeNode*> table{root};
+        vector<int> ret;
+        core(table,ret);
+        return ret;
+    }
+private:
+    void core(vector<TreeNode*>& table,vector<int>& ret)
+    {
+        while(!table.empty())
         {
-            if(j==t.length())
-                break;
-            for(;j<t.length();j++)
-            {
-                if(s[i]==t[j])
-                {
-                    j++;
-                    i++;
-                    break;
-                }
-            }
+            TreeNode* node=table.back();
+            table.pop_back();
+            if(node==NULL)
+                continue;
+            ret.push_back(node->val);
+            table.push_back(node->right);
+            table.push_back(node->left);
         }
-        return i==s.length();
     }
 };
