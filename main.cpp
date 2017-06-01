@@ -1,44 +1,37 @@
+#include "bitset"
 #include "iostream"
 #include "vector"
-#include "algorithm"
+#include "string"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int findMinArrowShots(vector<pair<int,int>> &points)
+    int maxProduct(vector<string> &words)
     {
-        sort(points.begin(),points.end(),[](pair<int,int> &a,pair<int,int> &b){return a.first<b.first;});
-        vector<pair<int,int>> arrows;
-        for(int i=0;i<points.size();i++)
+        vector<bitset<26>> table(words.size(),0);
+        for(int i=0;i<words.size();i++)
         {
-            if(arrows.empty())
+            for(int j=0;j<words[i].length();j++)
             {
-                arrows.push_back(points[i]);
+                table[i].set(words[i][j]-'a');
             }
-            else
+        }
+
+        int ret=0;
+        for(int i=0;i<table.size();i++)
+        {
+            for(int j=i+1;j<table.size();j++)
             {
-                if(points[i].first<=arrows.back().second)
+                if((table[i]&table[j]).none())
                 {
-                    arrows.back().first=points[i].first;
-                    if(arrows.back().second>points[i].second)
-                        arrows.back().second=points[i].second;
-                }
-                else
-                {
-                    arrows.push_back(points[i]);
+                    int len=words[i].length()*words[j].length();
+                    if(ret<len)
+                        ret=len;
                 }
             }
         }
-        return arrows.size();
+        return ret;
     }
 };
-
-int main()
-{
-    vector<pair<int,int>> points{{3,9},{7,12},{3,8},{7,12}};
-    Solution s;
-    cout<<s.findMinArrowShots(points)<<endl;
-    return 0;
-}
