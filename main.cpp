@@ -1,36 +1,44 @@
 #include "iostream"
-#include "string"
 #include "vector"
+#include "algorithm"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int minDistance(string &word1,string &word2)
+    int findMinArrowShots(vector<pair<int,int>> &points)
     {
-        int len1=word1.length(),len2=word2.length();
-        vector<vector<int>> table(len1+1,vector<int>(len2+1,0));
-        for(int i=1;i<=len1;i++)
+        sort(points.begin(),points.end(),[](pair<int,int> &a,pair<int,int> &b){return a.first<b.first;});
+        vector<pair<int,int>> arrows;
+        for(int i=0;i<points.size();i++)
         {
-            for(int j=1;j<=len2;j++)
+            if(arrows.empty())
             {
-                if(word1[i-1]==word2[j-1])
-                    table[i][j]=table[i-1][j-1]+1;
-                else if(table[i-1][j]>table[i][j-1])
-                    table[i][j]=table[i-1][j];
+                arrows.push_back(points[i]);
+            }
+            else
+            {
+                if(points[i].first<=arrows.back().second)
+                {
+                    arrows.back().first=points[i].first;
+                    if(arrows.back().second>points[i].second)
+                        arrows.back().second=points[i].second;
+                }
                 else
-                    table[i][j]=table[i][j-1];
+                {
+                    arrows.push_back(points[i]);
+                }
             }
         }
-        return len1+len2-2*table[len1][len2];
+        return arrows.size();
     }
 };
 
 int main()
 {
-    string a="sea",b="eat";
+    vector<pair<int,int>> points{{3,9},{7,12},{3,8},{7,12}};
     Solution s;
-    s.minDistance(a,b);
+    cout<<s.findMinArrowShots(points)<<endl;
     return 0;
 }
