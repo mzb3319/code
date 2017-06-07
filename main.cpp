@@ -1,54 +1,26 @@
 #include "iostream"
 #include "vector"
-#include "unordered_map"
 
 using namespace std;
-
-struct TreeNode
-{
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-
-};
-
 
 class Solution
 {
 public:
-    int rob(TreeNode *root)
+    int findDuplicate(vector<int> &nums)
     {
-        unordered_map<TreeNode*,int> table;
-        return core(root,table);
-    }
-private:
-    int core(TreeNode *node,unordered_map<TreeNode*,int> &table)
-    {
-        if(node==NULL)
-            return 0;
-        auto f=table.find(node);
-        if(f!=table.end())
-            return f->second;
-        //case1
-        int ret1=node->val;
-        auto left=node->left;
-        auto right=node->right;
-        if(left!=NULL)
+        int fast=nums[nums[0]],slow=nums[0];
+        while(nums[fast]!=nums[slow])
         {
-            ret1+=core(left->left,table)+core(left->right,table);
+            fast=nums[fast];
+            fast=nums[fast];
+            slow=nums[slow];
         }
-        if(right!=NULL)
+        int ret=0;
+        while(nums[ret]!=nums[slow])
         {
-            ret1+=core(right->left,table)+core(right->right,table);
+            ret=nums[ret];
+            slow=nums[slow];
         }
-        //case2
-        int ret2=0;
-        ret2+=core(left,table)+core(right,table);
-
-        if(ret1<ret2)
-            ret1=ret2;
-        table.insert({node,ret1});
-
-        return ret1;
+        return nums[ret];
     }
 };
