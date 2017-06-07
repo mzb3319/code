@@ -6,21 +6,28 @@ using namespace std;
 class Solution
 {
 public:
-    int findDuplicate(vector<int> &nums)
+    vector<vector<int>> permute(vector<int> &nums)
     {
-        int fast=nums[nums[0]],slow=nums[0];
-        while(nums[fast]!=nums[slow])
+        vector<vector<int>> ret;
+        core(nums,0,ret);
+        return ret;
+    }
+private:
+    void core(vector<int> &nums,int k,vector<vector<int>> &ret)
+    {
+        if(k==nums.size())
+            ret.push_back(nums);
+        for(int i=k;i<nums.size();i++)
         {
-            fast=nums[fast];
-            fast=nums[fast];
-            slow=nums[slow];
+            swap(nums,k,i);
+            core(nums,k+1,ret);
+            swap(nums,k,i);
         }
-        int ret=0;
-        while(nums[ret]!=nums[slow])
-        {
-            ret=nums[ret];
-            slow=nums[slow];
-        }
-        return nums[ret];
+    }
+    void swap(vector<int> &nums,int a,int b)
+    {
+        int tmp=nums[a];
+        nums[a]=nums[b];
+        nums[b]=tmp;
     }
 };
