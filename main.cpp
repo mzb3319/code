@@ -1,4 +1,5 @@
 #include "iostream"
+#include "string"
 #include "vector"
 
 using namespace std;
@@ -6,28 +7,34 @@ using namespace std;
 class Solution
 {
 public:
-    vector<vector<int>> permute(vector<int> &nums)
+    int longestPalindromeSubseq(string &s)
     {
-        vector<vector<int>> ret;
-        core(nums,0,ret);
-        return ret;
-    }
-private:
-    void core(vector<int> &nums,int k,vector<vector<int>> &ret)
-    {
-        if(k==nums.size())
-            ret.push_back(nums);
-        for(int i=k;i<nums.size();i++)
+        int n=s.length();
+        vector<vector<int>> table(2,vector<int>(n+1,0));
+        bool curr=true;
+        for(int i=0;i<n;i++)
         {
-            swap(nums,k,i);
-            core(nums,k+1,ret);
-            swap(nums,k,i);
+            for(int j=0;j<n;j++)
+            {
+                if(s[j]==s[n-i-1])
+                {
+                    table[curr][j+1]=table[!curr][j]+1;
+                }
+                else
+                {
+                    table[curr][j+1]=max(table[!curr][j+1],table[curr][j]);
+                }
+            }
+            curr=!curr;
         }
-    }
-    void swap(vector<int> &nums,int a,int b)
-    {
-        int tmp=nums[a];
-        nums[a]=nums[b];
-        nums[b]=tmp;
+        return table[!curr].back();
     }
 };
+
+int main()
+{
+    string s="bbbab";
+    Solution so;
+    so.longestPalindromeSubseq(s);
+    return 0;
+}
