@@ -1,40 +1,79 @@
 #include "iostream"
 #include "string"
 #include "vector"
+#include "string"
+#include "deque"
 
 using namespace std;
 
-class Solution
+struct TreeNode{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int a):val(a),left(NULL),right(NULL)
+    {};
+};
+
+class Codec
 {
 public:
-    int longestPalindromeSubseq(string &s)
+    string serialize(TreeNode *root)
     {
-        int n=s.length();
-        vector<vector<int>> table(2,vector<int>(n+1,0));
-        bool curr=true;
-        for(int i=0;i<n;i++)
+        string ret;
+        f(ret,root);
+        return ret;
+    }
+
+    TreeNode *deserialize(string data)
+    {
+        int index=0;
+        TreeNode * ret=d(data,index);
+        return ret;
+    }
+private:
+    void f(string &str,TreeNode *node)
+    {
+        if(!node)
         {
-            for(int j=0;j<n;j++)
-            {
-                if(s[j]==s[n-i-1])
-                {
-                    table[curr][j+1]=table[!curr][j]+1;
-                }
-                else
-                {
-                    table[curr][j+1]=max(table[!curr][j+1],table[curr][j]);
-                }
-            }
-            curr=!curr;
+            str+="null|";
+            return;
         }
-        return table[!curr].back();
+        str+=to_string(node->val)+'|';
+
+        f(str,node->left);
+        f(str,node->right);
+    }
+    TreeNode *d(string &str,int &index)
+    {
+        string next=nextNum(str,index);
+        if(next=="null")
+        {
+            return NULL;
+        }
+        TreeNode *node=new TreeNode(stoi(next));
+        if(index<str.size())
+            node->left=d(str,index);
+        if(index<str.size())
+            node->right=d(str,index);
+        return node;
+    }
+    string nextNum(string &str,int &index)
+    {
+        string ret;
+        int i=str.find_first_of('|',index);
+        if(i==str.size()-1)
+            return "null";
+        ret=str.substr(index,i-index);
+        index=i+1;
+        return ret;
     }
 };
 
 int main()
 {
-    string s="bbbab";
-    Solution so;
-    so.longestPalindromeSubseq(s);
+    string str("2|1|null|null|3|null|null|");
+    Codec code;
+    auto r=code.deserialize(str);
+    code.serialize(r);
     return 0;
 }
