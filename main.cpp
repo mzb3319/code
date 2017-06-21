@@ -1,46 +1,78 @@
 #include "iostream"
 #include "vector"
+#include "string"
+#include "deque"
 
 using namespace std;
 
-struct TreeNode
-{
+struct TreeNode{
     int val;
-    TreeNode* left;
-    TreeNode* right;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int a):val(a),left(NULL),right(NULL)
+    {};
 };
 
-class Solution
+class Codec
 {
 public:
-    int pathSum(TreeNode* root,int sum)
+    string serialize(TreeNode *root)
     {
-        vector<int> path;
-        int ret=0;
-        core(root,path,ret,sum);
+        string ret;
+        f(ret,root);
+        return ret;
+    }
+
+    TreeNode *deserialize(string data)
+    {
+        int index=0;
+        TreeNode * ret=d(data,index);
         return ret;
     }
 private:
-    void core(TreeNode* node,vector<int>& path,int &ret,int k)
+    void f(string &str,TreeNode *node)
     {
-        if(node==NULL)
-            return;
-        path.push_back(node->val);
-        ret+=findSum(path,k);
-        core(node->left,path,ret,k);
-        core(node->right,path,ret,k);
-        path.pop_back();
-    }
-    int findSum(vector<int>& path,int k)
-    {
-        int sum=0;
-        int ret=0;
-        for(int i=path.size()-1;i>=0;i--)
+        if(!node)
         {
-            sum+=path[i];
-            if(sum==k)
-                ret++;
+            str+="null|";
+            return;
         }
+        str+=to_string(node->val)+'|';
+
+        f(str,node->left);
+        f(str,node->right);
+    }
+    TreeNode *d(string &str,int &index)
+    {
+        string next=nextNum(str,index);
+        if(next=="null")
+        {
+            return NULL;
+        }
+        TreeNode *node=new TreeNode(stoi(next));
+        if(index<str.size())
+            node->left=d(str,index);
+        if(index<str.size())
+            node->right=d(str,index);
+        return node;
+    }
+    string nextNum(string &str,int &index)
+    {
+        string ret;
+        int i=str.find_first_of('|',index);
+        if(i==str.size()-1)
+            return "null";
+        ret=str.substr(index,i-index);
+        index=i+1;
         return ret;
     }
 };
+
+int main()
+{
+    string str("2|1|null|null|3|null|null|");
+    Codec code;
+    auto r=code.deserialize(str);
+    code.serialize(r);
+    return 0;
+}
