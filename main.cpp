@@ -1,37 +1,37 @@
-#include "vector"
 #include "iostream"
+#include "vector"
+#include "unordered_map"
+#include "unordered_set"
 
 using namespace std;
 
 class Solution
 {
 public:
-    Solution(vector<int> nums)
+    int combinationSum4(vector<int> &nums,int target)
     {
-        NUM=nums;
-    }
-
-    int pick(int target)
-    {
-        int ret=-1;
-        int count=0;
-        for(int i=0;i<NUM.size();i++)
-        {
-            if(NUM[i]!=target)
-                continue;
-            if(!count)
-            {
-                count++;
-                ret=i;
-            }
-            else
-            {
-                if(rand()%count==0)
-                    ret=i;
-            }
-        }
-        return ret;
+        unordered_map<int,int> table;
+        return core(nums,target,table);
     }
 private:
-    vector<int> NUM;
+    int core(vector<int> &nums,int target,unordered_map<int,int> &table)
+    {
+        auto f=table.find(target);
+        if(f!=table.end())
+            return f->second;
+        int count=0;
+        for(int i=0;i<nums.size();i++)
+        {
+            if(nums[i]==target)
+            {
+                count++;
+                continue;
+            }
+            else if(nums[i]>target)
+                continue;
+            count+=core(nums,target-nums[i],table);
+        }
+        table.insert({target,count});
+        return count;
+    }
 };
