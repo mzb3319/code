@@ -1,37 +1,31 @@
 #include "iostream"
 #include "string"
-#include "vector"
-
+#include "deque"
 
 using namespace std;
 
 class Solution
 {
 public:
-    string findLongestWord(string s,vector<string> &d)
+    string licenseKeyFormatting(string s,int K)
     {
-        vector<int> index(d.size());
-        string ret;
-        for(int i=0;i<s.length();i++)
+        deque<char> str;
+        int count=0;
+        for(int i=s.length()-1;i>=0;i--)
         {
-            for(int j=0;j<d.size();j++)
+            if(s[i]=='-')
+                continue;
+            str.push_front(toupper(s[i]));
+            count++;
+            if(count==K)
             {
-                if(index[j]==-1)
-                    continue;
-                if(d[j][index[j]]==s[i])
-                {
-                    index[j]++;
-                    if(index[j]==d[j].size())
-                    {
-                        if(d[j].length()>ret.length()||(d[j].length()==ret.length()&&d[j]<ret))
-                        {
-                            ret=d[j];
-                        }
-                        index[j]=-1;
-                    }
-                }
+                count=0;
+                str.push_front('-');
             }
         }
+        if(str.front()=='-')
+            str.pop_front();
+        string ret(str.begin(),str.end());
         return ret;
     }
 };
