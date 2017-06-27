@@ -1,31 +1,66 @@
 #include "iostream"
 #include "string"
-#include "deque"
 
 using namespace std;
 
 class Solution
 {
 public:
-    string licenseKeyFormatting(string s,int K)
+    string decodeString(string s)
     {
-        deque<char> str;
-        int count=0;
-        for(int i=s.length()-1;i>=0;i--)
+        return core(s,0,s.length()-1);
+    }
+
+private:
+    string core(string &s,int b,int e)
+    {
+        string num;
+        string text;
+        string ret;
+        for(int i=b;i<=e;i++)
         {
-            if(s[i]=='-')
-                continue;
-            str.push_front(toupper(s[i]));
-            count++;
-            if(count==K)
+            if(isdigit(s[i]))
             {
-                count=0;
-                str.push_front('-');
+                num+=s[i];
+            }
+            else if(isalpha(s[i]))
+            {
+                text+=s[i];
+            }
+            else if(s[i]=='[')
+            {
+                int beg=i+1;
+                int count=1;
+                while(i<=e)
+                {
+                    i++;
+                    if(s[i]=='[')
+                        count++;
+                    else if(s[i]==']')
+                        count--;
+                    if(!count)
+                        break;
+                }
+                string r=core(s,beg,i-1);
+                int n=stoi(num);
+                ret+=text;
+                text.clear();
+                while(n--)
+                {
+                    ret+=r;
+                }
+                num.clear();
             }
         }
-        if(str.front()=='-')
-            str.pop_front();
-        string ret(str.begin(),str.end());
+        ret+=text;
         return ret;
     }
 };
+
+int main()
+{
+    string str("sd2[f2[e]g]i");
+    Solution so;
+    so.decodeString(str);
+    return 0;
+}
