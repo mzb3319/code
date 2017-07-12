@@ -1,91 +1,83 @@
 #include "iostream"
-#include "unordered_map"
 #include "vector"
+#include "unordered_set"
+#include "deque"
+#include "algorithm"
 
 using namespace std;
 
+//这个题直接看答案，标准答案上的第三种方法，计算空闲槽的方法，可以归结到数学上。
 class Solution
 {
 public:
-    bool canCross(vector<int> &stones)
+    int leastInterval(vector<char> &tasks,int n)
     {
-        unordered_map<string,bool> table;
-        if(stones.size()<=1)
-            return true;
-        return core(stones,1,1,table);
-    }
-
-private:
-    bool core(vector<int> &stones,int index,int step,unordered_map<string,bool> &table)
-    {
-        int Step=step+stones[index-1];
-        int old_index=index-1;
-        while(index<stones.size()&&stones[index]<Step)
+        unordered_set<char> table;
+        deque<char> tasksQ;
+        vector<pair<char,int>> tArr(26,pair<char,int>{'a',0});
+        for(char c:tasks)
         {
+            tArr[c-'A'].first=c;
+            tArr[c-'A'].second++;
+        }
+        sort(tArr.begin(),tArr.end(),[](pair<char,int> &a,pair<char,int> &b){return a.second>b.second;});
+        int ret=0;
+        int N=tasks.size();
+        while(N)
+        {
+            ret++;
+            char nt=findNextTask(tArr,table,n);
+            tasksQ.push_back(nt);
+            if(tasksQ.size()>n)
+            {
+                char p=tasksQ.front();
+                if(isalpha(p))
+                {
+                    table.erase(p);
+                }
+                tasksQ.pop_front();
+            }
+            if(nt)
+            {
+                N--;
+            }
+        }
+        return ret;
+    }
+private:
+    char findNextTask(vector<pair<char,int>> &arr,unordered_set<char> &table,int n)
+    {
+        int index=0;
+        sort(arr.begin(),arr.end(),[](pair<char,int> &a,pair<char,int> &b){return a.second>b.second;});
+        int i=26;
+        while(i)
+        {
+            i--;
+            if(index>25)
+                index=0;
+            if(arr[index].second==0)
+            {
+                index++;
+                continue;
+            }
+            char fc=arr[index].first;
+            auto f=table.find(fc);
+            if(f==table.end())
+            {
+                table.insert(fc);
+                arr[index++].second--;
+                return fc;
+            }
             index++;
         }
-        if(index==stones.size())
-            return false;
-
-        if(stones[index]!=step+stones[old_index])
-        {
-            table.insert({to_string(stones[old_index])+'-'+to_string(step),false});
-            return false;
-        }
-
-        if(index==stones.size()-1)
-            return true;
-
-        int step_a=step-1,step_b=step,step_c=step+1;
-
-        string key_a,key_b,key_c;
-        key_a=key_b=key_c=to_string(stones[index])+'-';
-
-        if(step_a>0)
-        {
-            key_a+=to_string(step_a);
-            auto f=table.find(key_a);
-            if(f==table.end())
-            {
-                if(core(stones,index+1,step_a,table))
-                    return true;
-            }
-            else if(f->second)
-                return true;
-        }
-        if(step_b>0)
-        {
-            key_b+=to_string(step_b);
-            auto f=table.find(key_b);
-            if(f==table.end())
-            {
-                if(core(stones,index+1,step_b,table))
-                    return true;
-            }
-            else if(f->second)
-                return true;
-        }
-        if(step_c>0)
-        {
-            key_c+=to_string(step_c);
-            auto f=table.find(key_c);
-            if(f==table.end())
-            {
-                if(core(stones,index+1,step_c,table))
-                    return true;
-            }
-            else if(f->second)
-                return true;
-        }
-        table.insert({to_string(stones[old_index])+'-'+to_string(step),false});
-        return false;
+        return 0;
     }
 };
 
 int main()
 {
-    vector<int> arr{0,1,3,5,6,8,12,17};
+    vector<char> tasks{'A','A','A','A','A','A','B','C','D','E','F','G'};
     Solution s;
-    s.canCross(arr);
+    s.leastInterval(tasks,2);
     return 0;
 }
