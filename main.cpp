@@ -1,83 +1,139 @@
 #include "iostream"
+#include "string"
 #include "vector"
-#include "unordered_set"
-#include "deque"
-#include "algorithm"
 
 using namespace std;
 
-//这个题直接看答案，标准答案上的第三种方法，计算空闲槽的方法，可以归结到数学上。
+
 class Solution
 {
 public:
-    int leastInterval(vector<char> &tasks,int n)
+    int numDecodings(string &s)
     {
-        unordered_set<char> table;
-        deque<char> tasksQ;
-        vector<pair<char,int>> tArr(26,pair<char,int>{'a',0});
-        for(char c:tasks)
+        const int M=1000000007;
+        vector<unsigned long long> table(s.length(),0);
+        for(int i=s.length()-1;i>=0;--i)
         {
-            tArr[c-'A'].first=c;
-            tArr[c-'A'].second++;
-        }
-        sort(tArr.begin(),tArr.end(),[](pair<char,int> &a,pair<char,int> &b){return a.second>b.second;});
-        int ret=0;
-        int N=tasks.size();
-        while(N)
-        {
-            ret++;
-            char nt=findNextTask(tArr,table,n);
-            tasksQ.push_back(nt);
-            if(tasksQ.size()>n)
+            int pIndex=i+1,ppIndex=i+2;
+            char c=s[i];
+            if(c=='0')
             {
-                char p=tasksQ.front();
-                if(isalpha(p))
-                {
-                    table.erase(p);
-                }
-                tasksQ.pop_front();
-            }
-            if(nt)
-            {
-                N--;
-            }
-        }
-        return ret;
-    }
-private:
-    char findNextTask(vector<pair<char,int>> &arr,unordered_set<char> &table,int n)
-    {
-        int index=0;
-        sort(arr.begin(),arr.end(),[](pair<char,int> &a,pair<char,int> &b){return a.second>b.second;});
-        int i=26;
-        while(i)
-        {
-            i--;
-            if(index>25)
-                index=0;
-            if(arr[index].second==0)
-            {
-                index++;
+                if(pIndex<s.length()&&s[pIndex]=='0')
+                    return 0;
                 continue;
             }
-            char fc=arr[index].first;
-            auto f=table.find(fc);
-            if(f==table.end())
+            if(c=='*')
             {
-                table.insert(fc);
-                arr[index++].second--;
-                return fc;
+                if(pIndex>=s.length())
+                {
+                    table[i]=9;
+                }
+                else
+                {
+                    if(s[pIndex]=='0')
+                    {
+                        if(ppIndex<s.length()&&s[ppIndex]!='0')
+                            table[i]=2*table[ppIndex];
+                        else
+                            table[i]=2;
+                    }
+                    else
+                    {
+                        if(ppIndex<s.length()&&s[ppIndex]=='0')
+                        {
+                            table[i]=9*table[pIndex];
+                        }
+                        else
+                        {
+                            table[i]=9*table[pIndex];
+                            unsigned long long add=1;
+                            if(ppIndex<s.length())
+                                add=table[ppIndex];
+                            if(s[pIndex]=='*')
+                            {
+                                table[i]+=15*add;
+                            }
+                            else
+                            {
+                                if(s[pIndex]<'7')
+                                {
+                                    table[i]+=2*add;
+                                }
+                                else
+                                {
+                                    table[i]+=add;
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            index++;
+            else
+            {
+                if(pIndex>=s.length())
+                {
+                    if(s[i]=='0')
+                        table[i]=0;
+                    else
+                        table[i]=1;
+                }
+                else
+                {
+                    if(s[pIndex]=='0')
+                    {
+                        if(s[i]>='3')
+                            return 0;
+                        if(ppIndex<s.length()&&s[ppIndex]!='0')
+                        {
+                            table[i]=table[ppIndex];
+                        }
+                        else
+                            table[i]=1;
+                    }
+                    else
+                    {
+                        if(ppIndex<s.length()&&s[ppIndex]=='0')
+                        {
+                            table[i]=table[pIndex];
+                        }
+                        else
+                        {
+                            table[i]=table[pIndex];
+                            unsigned long long add=1;
+                            if(ppIndex<s.length())
+                                add=table[ppIndex];
+                            if(s[pIndex]=='*')
+                            {
+                                if(s[i]<'3')
+                                {
+                                    if(s[i]=='1')
+                                        table[i]+=9*add;
+                                    else
+                                        table[i]+=6*add;
+                                }
+                            }
+                            else
+                            {
+                                string str{s[i],s[pIndex]};
+                                int num=stoi(str);
+                                if(num<=26)
+                                    table[i]+=add;
+                            }
+                        }
+                    }
+                }
+            }
+            table[i]=table[i]%M;
         }
-        return 0;
+        return (int)table[0];
     }
 };
 
+
 int main()
 {
-    vector<char> tasks{'A','A','A','A','A','A','B','C','D','E','F','G'};
     Solution s;
-    s.leastInterval(tasks,2);
+    string str("**");
+    cout<<s.numDecodings(str)<<endl;
     return 0;
 }
