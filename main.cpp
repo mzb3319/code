@@ -1,139 +1,76 @@
 #include "iostream"
-#include "string"
 #include "vector"
+#include "unordered_map"
 
 using namespace std;
-
 
 class Solution
 {
 public:
-    int numDecodings(string &s)
+    int shoppingOffers(vector<int> &price,vector<vector<int>> &special,vector<int> &needs)
     {
-        const int M=1000000007;
-        vector<unsigned long long> table(s.length(),0);
-        for(int i=s.length()-1;i>=0;--i)
+        unordered_map<string,int> table;
+        return core(price,special,0,needs,table);
+    }
+private:
+    int core(vector<int> &price,vector<vector<int>> &special,int index,vector<int> needs,unordered_map<string,int> &table)
+    {
+        if(index>=special.size())
+            return buyOne(price,needs);
+        string s;
+        for(int n:needs)
+            s+=to_string(n)+",";
+        auto f=table.find(s);
+        if(f!=table.end())
+            return f->second;
+
+        int min=INT32_MAX;
+        int curr=0;
+        int i=0;
+        for(;i<7&&check(special[index],needs);++i)
         {
-            int pIndex=i+1,ppIndex=i+2;
-            char c=s[i];
-            if(c=='0')
-            {
-                if(pIndex<s.length()&&s[pIndex]=='0')
-                    return 0;
-                continue;
-            }
-            if(c=='*')
-            {
-                if(pIndex>=s.length())
-                {
-                    table[i]=9;
-                }
-                else
-                {
-                    if(s[pIndex]=='0')
-                    {
-                        if(ppIndex<s.length()&&s[ppIndex]!='0')
-                            table[i]=2*table[ppIndex];
-                        else
-                            table[i]=2;
-                    }
-                    else
-                    {
-                        if(ppIndex<s.length()&&s[ppIndex]=='0')
-                        {
-                            table[i]=9*table[pIndex];
-                        }
-                        else
-                        {
-                            table[i]=9*table[pIndex];
-                            unsigned long long add=1;
-                            if(ppIndex<s.length())
-                                add=table[ppIndex];
-                            if(s[pIndex]=='*')
-                            {
-                                table[i]+=15*add;
-                            }
-                            else
-                            {
-                                if(s[pIndex]<'7')
-                                {
-                                    table[i]+=2*add;
-                                }
-                                else
-                                {
-                                    table[i]+=add;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if(pIndex>=s.length())
-                {
-                    if(s[i]=='0')
-                        table[i]=0;
-                    else
-                        table[i]=1;
-                }
-                else
-                {
-                    if(s[pIndex]=='0')
-                    {
-                        if(s[i]>='3')
-                            return 0;
-                        if(ppIndex<s.length()&&s[ppIndex]!='0')
-                        {
-                            table[i]=table[ppIndex];
-                        }
-                        else
-                            table[i]=1;
-                    }
-                    else
-                    {
-                        if(ppIndex<s.length()&&s[ppIndex]=='0')
-                        {
-                            table[i]=table[pIndex];
-                        }
-                        else
-                        {
-                            table[i]=table[pIndex];
-                            unsigned long long add=1;
-                            if(ppIndex<s.length())
-                                add=table[ppIndex];
-                            if(s[pIndex]=='*')
-                            {
-                                if(s[i]<'3')
-                                {
-                                    if(s[i]=='1')
-                                        table[i]+=9*add;
-                                    else
-                                        table[i]+=6*add;
-                                }
-                            }
-                            else
-                            {
-                                string str{s[i],s[pIndex]};
-                                int num=stoi(str);
-                                if(num<=26)
-                                    table[i]+=add;
-                            }
-                        }
-                    }
-                }
-            }
-            table[i]=table[i]%M;
+            curr=i*special[index].back();
+            if(i)
+                buy(special[index],needs);
+            curr+=core(price,special,index+1,needs,table);
+
+            if(curr<min)
+                min=curr;
         }
-        return (int)table[0];
+        if(!i)
+        {
+            curr=core(price,special,index+1,needs,table);
+            if(curr<min)
+                min=curr;
+        }
+        table.insert({s,min});
+        return min;
+    }
+    bool check(const vector<int> &special,const vector<int> &needs)
+    {
+        for(int i=0;i<needs.size();++i)
+            if(needs[i]<special[i])return false;
+        return true;
+    }
+    void buy(const vector<int> &special,vector<int> &needs)
+    {
+        for(int i=0;i<needs.size();++i)
+            needs[i]-=special[i];
+    }
+    int buyOne(const vector<int> &price,const vector<int> &needs)
+    {
+        int ret=0;
+        for(int i=0;i<needs.size();++i)
+            if(needs[i]>0)ret+=needs[i]*price[i];
+        return ret;
     }
 };
 
-
 int main()
 {
+    vector<int> price{2,5},needs{3,2};
+    vector<vector<int>> special{{3,0,5},{1,2,10}};
     Solution s;
-    string str("**");
-    cout<<s.numDecodings(str)<<endl;
+    cout<<s.shoppingOffers(price,special,needs)<<endl;
     return 0;
 }
