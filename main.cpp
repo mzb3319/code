@@ -1,26 +1,40 @@
 #include "iostream"
-#include "vector"
 #include "string"
+#include "vector"
+#include "algorithm"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int strStr(string &haystack,string &needle)
+    string shortestPalindrome(string s)
     {
-        if(haystack.empty()||haystack.length()<needle.length())
-            return -1;
-        for(int i=0;i<haystack.length()-needle.length()+1;++i)
+        string two=s;
+        reverse(s.begin(),s.end());
+        two+="#";
+        two+=s;
+        vector<int> table(two.length(),0);
+        for(int i=1;i<two.length();++i)
         {
-            int index1=i,index2=0;
-            while(haystack[index1]==needle[index2])
+            int index=i;
+            while(table[index-1]!=0&&two[i]!=two[table[index-1]])
             {
-                ++index1;++index2;
+                index=table[index-1];
             }
-            if(index2==needle.length())
-                return i;
+            if(two[i]==two[table[index-1]])
+                table[i]=table[index-1]+1;
+            else
+                table[i]=table[index-1];
         }
-        return -1;
+        return s.substr(0,s.length()-table.back())+two.substr(0,s.length());
     }
 };
+
+int main()
+{
+    Solution s;
+    string str("aacecaaa");
+    cout<<s.shortestPalindrome(str)<<endl;
+    return 0;
+}
