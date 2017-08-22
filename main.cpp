@@ -6,30 +6,23 @@ using namespace std;
 class Solution
 {
 public:
-    int findDuplicate(vector<int> &nums)
+    vector<int> findDisappearedNumbers(vector<int> &nums)
     {
-        int fast=0,slow=0;
-        do{
-            fast=nums[fast];
-            fast=nums[fast];
-
-            slow=nums[slow];
+        for(int i=0;i<nums.size();++i)
+        {
+            if(nums[i]-1==i)
+                continue;
+            if(nums[nums[i]-1]==nums[i])
+                continue;
+            int tmp=nums[nums[i]-1];
+            nums[nums[i]-1]=nums[i];
+            nums[i]=tmp;
+            --i;
         }
-        while(fast!=slow);
-        fast=0;
-        do{
-            fast=nums[fast];
-            slow=nums[slow];
-        }
-        while(fast!=slow);
-        return slow;
+        vector<int> ret;
+        for(int i=0;i<nums.size();++i)
+            if(nums[i]!=i+1)
+                ret.push_back(i+1);
+        return ret;
     }
 };
-
-int main()
-{
-    vector<int> nums{1,3,4,2,2};
-    Solution s;
-    cout<<s.findDuplicate(nums);
-    return 0;
-}
