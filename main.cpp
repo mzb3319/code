@@ -1,28 +1,37 @@
+#include "istream"
 #include "vector"
-#include "iostream"
 
 using namespace std;
 
 class Solution
 {
 public:
-    vector<int> findDisappearedNumbers(vector<int> &nums)
+    int trap(vector<int> &height)
     {
-        for(int i=0;i<nums.size();++i)
+        int left_max=0,right_max=0;
+        int beg=0,end=height.size()-1;
+        int ret=0;
+        while(beg<end)
         {
-            if(nums[i]-1==i)
-                continue;
-            if(nums[nums[i]-1]==nums[i])
-                continue;
-            int tmp=nums[nums[i]-1];
-            nums[nums[i]-1]=nums[i];
-            nums[i]=tmp;
-            --i;
+            if(height[beg]<=height[end])
+            {
+                if(left_max<height[beg])
+                    left_max=height[beg];
+                ++beg;
+                int tmp=left_max-height[beg];
+                if(tmp>0)
+                    ret+=tmp;
+            }
+            else
+            {
+                if(right_max<height[end])
+                    right_max=height[end];
+                --end;
+                int tmp=right_max-height[end];
+                if(tmp>0)
+                    ret+=tmp;
+            }
         }
-        vector<int> ret;
-        for(int i=0;i<nums.size();++i)
-            if(nums[i]!=i+1)
-                ret.push_back(i+1);
         return ret;
     }
 };
