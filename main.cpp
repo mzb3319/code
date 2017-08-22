@@ -1,54 +1,31 @@
 #include "vector"
 #include "iostream"
+#include "unordered_set"
 
 using namespace std;
 
 class Solution
 {
 public:
-    vector<int> searchRange(vector<int> &nums,int target)
+    bool isValidSudoku(vector<vector<char>> &board)
     {
-        int p=bs(nums,target,0,nums.size()-1);
-        if(p==-1)
-            return {-1,-1};
-        int l=left(nums,target,0,p);
-        int r=right(nums,target,p,nums.size()-1);
-        return {l,r};
-    }
-private:
-    int left(vector<int> &nums,int target,int beg,int end)
-    {
-        if(beg==end)
-            return beg;
-        if(end==0||nums[end]!=nums[end-1])
-            return end;
-        --end;
-        int l=bs(nums,target,beg,end);
-        return left(nums,target,beg,l);
-    }
-    int right(vector<int> &nums,int target,int beg,int end)
-    {
-        if(beg==end)
-            return beg;
-        if(beg==nums.size()-1||nums[beg]!=nums[beg+1])
-            return beg;
-        ++beg;
-        int r=bs(nums,target,beg,end);
-        return right(nums,target,r,end);
-    }
-
-    int bs(vector<int> &nums,int target,int beg,int end)
-    {
-        while(beg<=end)
+        vector<vector<unordered_set<char>>> grid9(3,vector<unordered_set<char>>(3));
+        vector<unordered_set<char>> row(9),col(9);
+        for(int i=0;i<board.size();++i)
         {
-            int mid=(beg+end)/2;
-            if(nums[mid]==target)
-                return mid;
-            else if(nums[mid]>target)
-                end=mid-1;
-            else
-                beg=mid+1;
+            for(int j=0;j<board.front().size();++j)
+            {
+                if(board[i][j]=='.')
+                    continue;
+                auto pr=row[i].insert(board[i][j]);
+                auto pc=col[j].insert(board[i][j]);
+                auto p=grid9[i/3][j/3].insert(board[i][j]);
+                if(pr.second&&pc.second&&p.second)
+                    continue;
+                else
+                    return false;
+            }
         }
-        return -1;
+        return true;
     }
 };
