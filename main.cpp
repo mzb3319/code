@@ -1,44 +1,37 @@
 #include "iostream"
 #include "vector"
-#include "string"
 
 using namespace std;
 
 class Solution
 {
 public:
-    string countAndSay(int n)
+    int firstMissingPositive(vector<int> &nums)
     {
-        vector<string> ret{"1",""};
-        bool flag=true;
-        while(n>1)
+        for(int i=0;i<nums.size();++i)
         {
-            ret[flag].clear();
-            int count=1;
-            char c=ret[!flag][0];
-            for(int i=1;i<ret[!flag].size();++i)
-            {
-                if(ret[!flag][i]==c)
-                    ++count;
-                else
-                {
-                    ret[flag]+=to_string(count)+c;
-                    c=ret[!flag][i];
-                    count=1;
-                }
-            }
-            ret[flag]+=to_string(count)+c;
-            flag=!flag;
-            --n;
+            if(nums[i]==i+1)
+                continue;
+            if((nums[i]-1<nums.size())&&(nums[nums[i]-1]==nums[i]))
+                continue;
+            if(nums[i]-1>=nums.size())
+                continue;
+            int tmp=nums[nums[i]-1];
+            nums[nums[i]-1]=nums[i];
+            nums[i]=tmp;
+            --i;
         }
-        return ret[!flag];
+        for(int i=0;i<nums.size();++i)
+            if(nums[i]!=(i+1))
+                return i+1;
+        return nums.size()+1;
     }
 };
 
-
 int main()
 {
+    vector<int> nums{1,1};
     Solution s;
-    cout<<s.countAndSay(5)<<endl;
+    s.firstMissingPositive(nums);
     return 0;
 }
