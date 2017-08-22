@@ -1,31 +1,44 @@
-#include "vector"
 #include "iostream"
-#include "unordered_set"
+#include "vector"
+#include "string"
 
 using namespace std;
 
 class Solution
 {
 public:
-    bool isValidSudoku(vector<vector<char>> &board)
+    string countAndSay(int n)
     {
-        vector<vector<unordered_set<char>>> grid9(3,vector<unordered_set<char>>(3));
-        vector<unordered_set<char>> row(9),col(9);
-        for(int i=0;i<board.size();++i)
+        vector<string> ret{"1",""};
+        bool flag=true;
+        while(n>1)
         {
-            for(int j=0;j<board.front().size();++j)
+            ret[flag].clear();
+            int count=1;
+            char c=ret[!flag][0];
+            for(int i=1;i<ret[!flag].size();++i)
             {
-                if(board[i][j]=='.')
-                    continue;
-                auto pr=row[i].insert(board[i][j]);
-                auto pc=col[j].insert(board[i][j]);
-                auto p=grid9[i/3][j/3].insert(board[i][j]);
-                if(pr.second&&pc.second&&p.second)
-                    continue;
+                if(ret[!flag][i]==c)
+                    ++count;
                 else
-                    return false;
+                {
+                    ret[flag]+=to_string(count)+c;
+                    c=ret[!flag][i];
+                    count=1;
+                }
             }
+            ret[flag]+=to_string(count)+c;
+            flag=!flag;
+            --n;
         }
-        return true;
+        return ret[!flag];
     }
 };
+
+
+int main()
+{
+    Solution s;
+    cout<<s.countAndSay(5)<<endl;
+    return 0;
+}
