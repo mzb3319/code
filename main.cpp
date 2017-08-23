@@ -1,35 +1,25 @@
-#include "iostream"
+#include "string"
 #include "vector"
+#include "unordered_map"
+#include "algorithm"
 
 using namespace std;
 
 class Solution
 {
 public:
-    void rotate(vector<vector<int>> &matrix)
+    vector<vector<string>> groupAnagrams(vector<string> &strs)
     {
-        int i=0,j=matrix.size()-1;
-        while(i<j)
+        unordered_map<string,vector<string>> table;
+        for(string &str:strs)
         {
-            int a=i,b=j;
-            while(a<j)
-            {
-                swap(matrix,i,a,a,j);
-                swap(matrix,b,i,j,b);
-                swap(matrix,i,a,j,b);
-                ++a;
-                --b;
-            }
-            ++i;
-            --j;
+            string tmp=str;
+            sort(tmp.begin(),tmp.end());
+            table[tmp].push_back(str);
         }
-    }
-
-private:
-    void swap(vector<vector<int>> &matrix,int i,int j,int m,int n)
-    {
-        int tmp=matrix[i][j];
-        matrix[i][j]=matrix[m][n];
-        matrix[m][n]=tmp;
+        vector<vector<string>> ret;
+        for(const auto &it:table)
+            ret.push_back(it.second);
+        return ret;
     }
 };
