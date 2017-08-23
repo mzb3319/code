@@ -1,75 +1,36 @@
-#include "iostream"
 #include "vector"
-#include "string"
+#include "iostream"
 
 using namespace std;
 
 class Solution
 {
 public:
-    bool isMatch(string &s,string &p)
+    vector<vector<int>> permute(vector<int> &nums)
     {
-        vector<vector<int>> table(s.length()+1,vector<int>(p.length()+1,-1));
-        return matchCore(s,0,p,0,table);
+        vector<vector<int>> table;
+        core(nums,0,table);
+        return table;
     }
 private:
-    bool matchCore(string &s,int index1,string &p,int index2,vector<vector<int>> &table)
+    void core(vector<int> &nums,int index,vector<vector<int>> &table)
     {
-        if(table[index1][index2]!=-1)
-            return table[index1][index2];
-        if(index1==s.length()&&index2==p.length())
+        if(index==nums.size())
         {
-            table[index1][index2]=1;
-            return true;
+            table.push_back(nums);
+            return;
         }
-        if(index2==p.length())
+        for(int i=index;i<nums.size();++i)
         {
-            table[index1][index2]=0;
-            return false;
+            swap(nums,index,i);
+            core(nums,index+1,table);
+            swap(nums,index,i);
         }
-        if(index1==s.length())
-        {
-            int i=index2;
-            while(index2<p.length())
-            {
-                if(p[index2]!='*')
-                {
-                    table[index1][index2]=0;
-                    return false;
-                }
-                ++index2;
-            }
-            table[index1][i]=true;
-            return true;
-        }
-        if(p[index2]=='?')
-        {
-            table[index1][index2]=matchCore(s,index1+1,p,index2+1,table);
-            return table[index1][index2];
-        }
-        else if(p[index2]=='*')
-        {
-            for (int i = index1; i <= s.length(); ++i)
-                if (matchCore(s, i, p, index2 + 1,table))
-                {
-                    table[index1][index2]=true;
-                    return true;
-                }
-        }
-        else if(p[index2]==s[index1])
-        {
-            table[index1][index2]=matchCore(s,index1+1,p,index2+1,table);
-            return table[index1][index2];
-        }
-        table[index1][index2]=false;
-        return false;
+    }
+    void swap(vector<int> &nums,int a,int b)
+    {
+        int tmp=nums[a];
+        nums[a]=nums[b];
+        nums[b]=tmp;
     }
 };
-
-int main()
-{
-    Solution s;
-    string str("aa"),p("*");
-    s.isMatch(str,p);
-    return 0;
-}
