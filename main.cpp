@@ -1,3 +1,4 @@
+#include "vector"
 #include "iostream"
 
 using namespace std;
@@ -5,27 +6,17 @@ using namespace std;
 class Solution
 {
 public:
-    double myPow(double x,int n)
+    int maxSubArray(vector<int> &nums)
     {
-        long long m=n;
-        if(m==1)
-            return x;
-        if(m==0)
-            return 1;
-        bool neg=false;
-        if(m<0)
+        int max=INT32_MIN,add=0;
+        for(int n:nums)
         {
-            neg=true;
-            m=-m;
+            add+=n;
+            if(add>max)
+                max=add;
+            if(add<0)
+                add=0;
         }
-        int carry=n%2;
-        m/=2;
-        double ret=myPow(x,m);
-        ret*=ret;
-        if(carry)
-            ret*=x;
-        if(neg)
-            ret=1/ret;
-        return ret;
+        return max;
     }
 };
