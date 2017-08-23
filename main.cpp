@@ -6,17 +6,27 @@ using namespace std;
 class Solution
 {
 public:
-    int maxSubArray(vector<int> &nums)
+    int maxProfit(vector<int> &prices)
     {
-        int max=INT32_MIN,add=0;
-        for(int n:nums)
+        int len=prices.size();
+        for(int i=0;i<len-1;++i)
+            prices[i]=prices[i+1]-prices[i];
+
+        int m=0,add=0;
+        for(int i=0;i<len-1;++i)
         {
-            add+=n;
-            if(add>max)
-                max=add;
-            if(add<0)
-                add=0;
+            add+=prices[i];
+            m=max(m,add);
+            add=max(add,0);
         }
-        return max;
+        return m;
     }
 };
+
+int main()
+{
+    vector<int> prices;
+    Solution s;
+    s.maxProfit(prices);
+    return 0;
+}
