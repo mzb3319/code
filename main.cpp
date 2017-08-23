@@ -1,37 +1,75 @@
-#include "istream"
+#include "iostream"
 #include "vector"
+#include "string"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int trap(vector<int> &height)
+    bool isMatch(string &s,string &p)
     {
-        int left_max=0,right_max=0;
-        int beg=0,end=height.size()-1;
-        int ret=0;
-        while(beg<end)
+        vector<vector<int>> table(s.length()+1,vector<int>(p.length()+1,-1));
+        return matchCore(s,0,p,0,table);
+    }
+private:
+    bool matchCore(string &s,int index1,string &p,int index2,vector<vector<int>> &table)
+    {
+        if(table[index1][index2]!=-1)
+            return table[index1][index2];
+        if(index1==s.length()&&index2==p.length())
         {
-            if(height[beg]<=height[end])
-            {
-                if(left_max<height[beg])
-                    left_max=height[beg];
-                ++beg;
-                int tmp=left_max-height[beg];
-                if(tmp>0)
-                    ret+=tmp;
-            }
-            else
-            {
-                if(right_max<height[end])
-                    right_max=height[end];
-                --end;
-                int tmp=right_max-height[end];
-                if(tmp>0)
-                    ret+=tmp;
-            }
+            table[index1][index2]=1;
+            return true;
         }
-        return ret;
+        if(index2==p.length())
+        {
+            table[index1][index2]=0;
+            return false;
+        }
+        if(index1==s.length())
+        {
+            int i=index2;
+            while(index2<p.length())
+            {
+                if(p[index2]!='*')
+                {
+                    table[index1][index2]=0;
+                    return false;
+                }
+                ++index2;
+            }
+            table[index1][i]=true;
+            return true;
+        }
+        if(p[index2]=='?')
+        {
+            table[index1][index2]=matchCore(s,index1+1,p,index2+1,table);
+            return table[index1][index2];
+        }
+        else if(p[index2]=='*')
+        {
+            for (int i = index1; i <= s.length(); ++i)
+                if (matchCore(s, i, p, index2 + 1,table))
+                {
+                    table[index1][index2]=true;
+                    return true;
+                }
+        }
+        else if(p[index2]==s[index1])
+        {
+            table[index1][index2]=matchCore(s,index1+1,p,index2+1,table);
+            return table[index1][index2];
+        }
+        table[index1][index2]=false;
+        return false;
     }
 };
+
+int main()
+{
+    Solution s;
+    string str("aa"),p("*");
+    s.isMatch(str,p);
+    return 0;
+}
