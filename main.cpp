@@ -1,25 +1,31 @@
-#include "string"
-#include "vector"
-#include "unordered_map"
-#include "algorithm"
+#include "iostream"
 
 using namespace std;
 
 class Solution
 {
 public:
-    vector<vector<string>> groupAnagrams(vector<string> &strs)
+    double myPow(double x,int n)
     {
-        unordered_map<string,vector<string>> table;
-        for(string &str:strs)
+        long long m=n;
+        if(m==1)
+            return x;
+        if(m==0)
+            return 1;
+        bool neg=false;
+        if(m<0)
         {
-            string tmp=str;
-            sort(tmp.begin(),tmp.end());
-            table[tmp].push_back(str);
+            neg=true;
+            m=-m;
         }
-        vector<vector<string>> ret;
-        for(const auto &it:table)
-            ret.push_back(it.second);
+        int carry=n%2;
+        m/=2;
+        double ret=myPow(x,m);
+        ret*=ret;
+        if(carry)
+            ret*=x;
+        if(neg)
+            ret=1/ret;
         return ret;
     }
 };
