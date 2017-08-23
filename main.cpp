@@ -1,81 +1,35 @@
 #include "iostream"
 #include "vector"
-#include "unordered_set"
-#include "unordered_map"
-#include "algorithm"
 
 using namespace std;
 
 class Solution
 {
 public:
-    //和之前版本的区别在于递归时不是传递引用,并且交换后不换回
-    vector<vector<int>> permuteUnique(vector<int> &nums)
+    void rotate(vector<vector<int>> &matrix)
     {
-        vector<vector<int>> table;
-        sort(nums.begin(),nums.end());
-        core(nums,0,table);
-        return table;
-    }
-    vector<vector<int>> permuteUnique1(vector<int> &nums)
-    {
-        unordered_map<int,int> table;
-        for(int n:nums)
-            ++table[n];
-        vector<int> tmp;
-        vector<vector<int>> ret;
-        core(table,tmp,nums.size(),ret);
-        return ret;
-    }
-private:
-    void core(unordered_map<int,int> &table,vector<int> &tmp,int len,vector<vector<int>> &ret)
-    {
-        if(len==tmp.size())
+        int i=0,j=matrix.size()-1;
+        while(i<j)
         {
-            ret.push_back(tmp);
-            return;
-        }
-        for(auto &it:table)
-        {
-            if(it.second>0)
+            int a=i,b=j;
+            while(a<j)
             {
-                --it.second;
-                tmp.push_back(it.first);
-                core(table,tmp,len+1,ret);
-                tmp.pop_back();
-                ++it.second;
+                swap(matrix,i,a,a,j);
+                swap(matrix,b,i,j,b);
+                swap(matrix,i,a,j,b);
+                ++a;
+                --b;
             }
+            ++i;
+            --j;
         }
     }
-    //这里传递的不是引用
-    void core(vector<int> nums,int index,vector<vector<int>> &table)
+
+private:
+    void swap(vector<vector<int>> &matrix,int i,int j,int m,int n)
     {
-        if(index==nums.size())
-        {
-            table.push_back(nums);
-            return;
-        }
-        for(int i=index;i<nums.size();++i)
-        {
-            if((i!=index)&&nums[i]==nums[index])
-                continue;
-            swap(nums,index,i);
-            core(nums,index+1,table);
-//            swap(nums,index,i);
-        }
-    }
-    void swap(vector<int> &nums,int a,int b)
-    {
-        int tmp=nums[a];
-        nums[a]=nums[b];
-        nums[b]=tmp;
+        int tmp=matrix[i][j];
+        matrix[i][j]=matrix[m][n];
+        matrix[m][n]=tmp;
     }
 };
-
-int main()
-{
-    Solution s;
-    vector<int> nums{1,1,2};
-    s.permuteUnique(nums);
-    return 0;
-}
