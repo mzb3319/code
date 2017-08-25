@@ -1,22 +1,37 @@
-#include "iostream"
+#include "istream"
 #include "vector"
+#include "algorithm"
 
 using namespace std;
+
+struct Interval
+{
+    int start;
+    int end;
+
+};
 
 class Solution
 {
 public:
-    bool canJump(vector<int> &nums)
+    vector<Interval> merge(vector<Interval> &intervals)
     {
-        if(nums.size()<2)
-            return true;
-
-        int nextJump=nums.size()-1;
-        for(int i=nums.size()-2;i>=0;--i)
+        if(intervals.size()<2)
+            return intervals;
+        sort(intervals.begin(),intervals.end(),[](const Interval &a,const Interval &b){return a.start<b.start;});
+        vector<Interval> ret;
+        Interval tmp=intervals.front();
+        for(int i=1;i<intervals.size();++i)
         {
-            if(nums[i]+i>=nextJump)
-                nextJump=i;
+            if(intervals[i].start<=tmp.end)
+                tmp.end=max(tmp.end,intervals[i].end);
+            else
+            {
+                ret.push_back(tmp);
+                tmp=intervals[i];
+            }
         }
-        return nums.front()>=nextJump?true:false;
+        ret.push_back(tmp);
+        return ret;
     }
 };
