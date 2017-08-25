@@ -1,37 +1,24 @@
-#include "istream"
+#include "iostream"
 #include "vector"
-#include "algorithm"
 
 using namespace std;
-
-struct Interval
-{
-    int start;
-    int end;
-
-};
 
 class Solution
 {
 public:
-    vector<Interval> merge(vector<Interval> &intervals)
+    int uniquePaths(int m,int n)
     {
-        if(intervals.size()<2)
-            return intervals;
-        sort(intervals.begin(),intervals.end(),[](const Interval &a,const Interval &b){return a.start<b.start;});
-        vector<Interval> ret;
-        Interval tmp=intervals.front();
-        for(int i=1;i<intervals.size();++i)
+        if(m<=0||n<=0)
+            return 0;
+        vector<vector<int>> table(m+1,vector<int>(n+1,0));
+        table[m-1][n]=1;
+        for(int i=n-1;i>=0;--i)
         {
-            if(intervals[i].start<=tmp.end)
-                tmp.end=max(tmp.end,intervals[i].end);
-            else
+            for(int j=m-1;j>=0;--j)
             {
-                ret.push_back(tmp);
-                tmp=intervals[i];
+                table[j][i]=table[j+1][i]+table[j][i+1];
             }
         }
-        ret.push_back(tmp);
-        return ret;
+        return table[0][0];
     }
 };
