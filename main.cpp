@@ -1,42 +1,42 @@
-#include "vector"
 #include "iostream"
-#include "algorithm"
+#include "vector"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int maxProfit(int k,vector<int> &prices)
+    vector<int> spiralOrder(vector<vector<int>> &matrix)
     {
-        //这种情况就表示买卖次数超过一般后,我们可以一次买,接着卖,只要是赚钱的就可以买卖操作
-        if(k>prices.size()/2)
+        if(matrix.empty())
+            return {};
+        vector<int> ret;
+        int row_beg=0,row_end=matrix.size()-1,col_beg=0,col_end=matrix.front().size()-1;
+        while(row_beg<=row_end&&col_beg<=col_end)
         {
-            int ret=0;
-            for(int i=1;i<prices.size();++i)
-            {
-                ret+=max(prices[i]-prices[i-1],0);
-            }
-            return ret;
-        }
-        vector<int> buy(k+1,INT32_MIN),sel(k+1,0);
-        int ret=0;
-        for(int i=0;i<prices.size();++i)
-        {
-            for(int j=1;j<=k;++j)
-            {
-                buy[j]=max(buy[j],sel[j-1]-prices[i]);
-                sel[j]=max(sel[j],prices[i]+buy[j]);
-                if(sel[j]>ret)
-                    ret=sel[j];
-            }
+            //print top_left2right
+            for(int i=col_beg;i<=col_end;++i)
+                ret.push_back(matrix[row_beg][i]);
+            ++row_beg;
+            if(row_beg>row_end)
+                break;
+            //print right_top2bottom
+            for(int i=row_beg;i<=row_end;++i)
+                ret.push_back(matrix[i][col_end]);
+            --col_end;
+            if(col_beg>col_end)
+                break;
+            //print bottom_right2left
+            for(int i=col_end;i>=col_beg;--i)
+                ret.push_back(matrix[row_end][i]);
+            --row_end;
+            if(row_beg>row_end)
+                break;
+            //print left_bottom2top
+            for(int i=row_end;i>=row_beg;--i)
+                ret.push_back(matrix[i][col_beg]);
+            ++col_beg;
         }
         return ret;
     }
 };
-
-int main()
-{
-    cout<<INT32_MAX<<endl;
-    return 0;
-}
