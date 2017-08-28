@@ -7,18 +7,32 @@ using namespace std;
 class Solution
 {
 public:
-    vector<int> plusOne(vector<int> &digits)
+    int mySqrt(int x)
     {
-        int carry=1;
-        deque<int> ret;
-        for(int i=digits.size()-1;i>=0;--i)
+        if(x<2)
+            return x;
+        long long beg=1,end=x/2;
+        while(beg<=end)
         {
-            int tmp=digits[i]+carry;
-            ret.push_front(tmp%10);
-            carry=tmp/10;
+            long long mid=(beg+end)/2;
+            long long tmp=mid*mid;
+            if(tmp==x)
+                return mid;
+            else if(tmp>x)
+                end=mid-1;
+            else
+                beg=mid+1;
         }
-        if(carry!=0)
-            ret.push_front(carry);
-        return vector<int>(ret.begin(),ret.end());
+        if(beg*beg>x)
+            return end;
+        else
+            return beg;
     }
 };
+
+int main()
+{
+    Solution s;
+    s.mySqrt(INT32_MAX);
+    return 0;
+}
