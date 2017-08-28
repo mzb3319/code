@@ -1,24 +1,24 @@
 #include "iostream"
 #include "vector"
+#include "deque"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int uniquePaths(int m,int n)
+    vector<int> plusOne(vector<int> &digits)
     {
-        if(m<=0||n<=0)
-            return 0;
-        vector<vector<int>> table(m+1,vector<int>(n+1,0));
-        table[m-1][n]=1;
-        for(int i=n-1;i>=0;--i)
+        int carry=1;
+        deque<int> ret;
+        for(int i=digits.size()-1;i>=0;--i)
         {
-            for(int j=m-1;j>=0;--j)
-            {
-                table[j][i]=table[j+1][i]+table[j][i+1];
-            }
+            int tmp=digits[i]+carry;
+            ret.push_front(tmp%10);
+            carry=tmp/10;
         }
-        return table[0][0];
+        if(carry!=0)
+            ret.push_front(carry);
+        return vector<int>(ret.begin(),ret.end());
     }
 };
