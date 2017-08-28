@@ -7,32 +7,17 @@ using namespace std;
 class Solution
 {
 public:
-    int mySqrt(int x)
+    int climbStairs(int n)
     {
-        if(x<2)
-            return x;
-        long long beg=1,end=x/2;
-        while(beg<=end)
+        if(n<3)
+            return n;
+        int a=1,b=2,stair=3;
+        while(stair<=n)
         {
-            long long mid=(beg+end)/2;
-            long long tmp=mid*mid;
-            if(tmp==x)
-                return mid;
-            else if(tmp>x)
-                end=mid-1;
-            else
-                beg=mid+1;
+            b=a+b;
+            a=b-a;
+            ++stair;
         }
-        if(beg*beg>x)
-            return end;
-        else
-            return beg;
+        return b;
     }
 };
-
-int main()
-{
-    Solution s;
-    s.mySqrt(INT32_MAX);
-    return 0;
-}
