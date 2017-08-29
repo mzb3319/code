@@ -1,4 +1,4 @@
-#include "istream"
+#include "iostream"
 #include "vector"
 
 using namespace std;
@@ -6,37 +6,53 @@ using namespace std;
 class Solution
 {
 public:
-    vector<vector<int>> subsets(vector<int> &nums)
+    bool exist(vector<vector<char>> &board,string &word)
     {
-        vector<vector<int>> table;
-        vector<int> ret;
-        for(int i=0;i<=nums.size();++i)
+        vector<vector<bool>> status(board.size(),vector<bool>(board[0].size(),false));
+        for(int i=0;i<board.size();++i)
         {
-            core(nums,0,i,ret,table);
+            for(int j=0;j<board[0].size();++j)
+            {
+                if(search(board,word,i,j,0,status))
+                {
+                    return true;
+                }
+            }
         }
-        return table;
+        return false;
     }
 private:
-    void core(vector<int> &nums,int index,int len,vector<int> ret,vector<vector<int>> &table)
+    bool search(vector<vector<char>> &board,string &word,int i,int j,int index,vector<vector<bool>> &status)
     {
-        if(ret.size()==len)
+        if(index==word.size())
+            return true;
+        if(i<0||i>=board.size()||j<0||j>=board[0].size())
+            return false;
+        if(status[i][j])
+            return false;
+        if(board[i][j]!=word[index])
+            return false;
+        status[i][j]=true;
+        if(
+                search(board,word,i+1,j,index+1,status)||
+                search(board,word,i-1,j,index+1,status)||
+                search(board,word,i,j+1,index+1,status)||
+                search(board,word,i,j-1,index+1,status)
+                )
         {
-            table.push_back(ret);
-            return;
+            status[i][j]=false;
+            return true;
         }
-        for(int i=index;i<nums.size();++i)
-        {
-            ret.push_back(nums[i]);
-            core(nums,i+1,len,ret,table);
-            ret.pop_back();
-        }
+        status[i][j]=false;
+        return false;
     }
 };
 
 int main()
 {
-    vector<int> nums{1,2,3};
     Solution s;
-    s.subsets(nums);
+    vector<vector<char>> board{{'C','A','A'},{'A','A','A'},{'B','C','D'}};
+    string word="AAB";
+    s.exist(board,word);
     return 0;
 }
