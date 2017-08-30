@@ -13,10 +13,10 @@ struct TreeNode
 class Solution
 {
 public:
-    vector<int> inorderTraversal(TreeNode *root)
+    bool isValidBST(TreeNode *root)
     {
         vector<TreeNode*> table;
-        vector<int> ret;
+        long long preVal=INT64_MIN;
         while(root||!table.empty())
         {
             if(root)
@@ -27,11 +27,14 @@ public:
             else
             {
                 root=table.back();
-                ret.push_back(root->val);
+                long long tmp=root->val;
+                if(tmp<=preVal)
+                    return false;
+                preVal=root->val;
                 root=root->right;
                 table.pop_back();
             }
         }
-        return ret;
+        return true;
     }
 };
