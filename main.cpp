@@ -1,35 +1,41 @@
-#include "vector"
+#include "string"
 #include "iostream"
+#include "vector"
+#include "unordered_map"
 
 using namespace std;
 
 class Solution
 {
 public:
-    void merge(vector<int> &nums1,int m,vector<int> &nums2,int n)
+    int numDecodings(string &s)
     {
-        int index1=m-1,index2=n-1,index=m+n-1;
-        while(index2>=0)
+        vector<int> table(s.length(),-1);
+        if(s.empty())
+            return 0;
+        return core(s,0,table);
+    }
+private:
+    int core(string &s,int index,vector<int> &table)
+    {
+        if(index==s.length())
+            return 1;
+        if(table[index]!=-1)
+            return table[index];
+        int tmp=stoi(s.substr(index,1));
+        int one=0;
+
+        if(tmp>=1&&tmp<=26)
+            one=core(s,index+1,table);
+
+        int two=0;
+        if(tmp!=0&&index+1<s.length())
         {
-            if(index1<0)
-            {
-                nums1[index]=nums2[index2];
-                --index2;
-            }
-            else
-            {
-                if(nums1[index1]>nums2[index2])
-                {
-                    nums1[index]=nums1[index1];
-                    --index1;
-                }
-                else
-                {
-                    nums1[index]=nums2[index2];
-                    --index2;
-                }
-            }
-            --index;
+            tmp=stoi(s.substr(index,2));
+            if(tmp>=1&&tmp<=26)
+                two=core(s,index+2,table);
         }
+        table[index]=one+two;
+        return table[index];
     }
 };
