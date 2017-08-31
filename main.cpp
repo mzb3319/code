@@ -16,20 +16,26 @@ struct TreeLinkNode
 class Solution
 {
 public:
-    void connect(TreeLinkNode *root)
+    vector<vector<int>> generate(int numRows)
     {
-        if(root==NULL)
-            return;
-        if(root->left!=NULL)
+        if(numRows<1)
+            return {};
+        vector<vector<int>> ret{{1}};
+        for(int i=1;i<numRows;++i)
         {
-            root->left->next=root->right;
-
-            if(root->next!=NULL)
+            int a=0,b=0;
+            vector<int> curr;
+            for(int j=0;j<=ret[i-1].size();++j)
             {
-                root->right->next=root->next->left;
+                a=b;
+                if(j<ret[i-1].size())
+                    b=ret[i-1][j];
+                else
+                    b=0;
+                curr.push_back(a+b);
             }
+            ret.push_back(curr);
         }
-        connect(root->left);
-        connect(root->right);
+        return ret;
     }
 };
