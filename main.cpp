@@ -13,28 +13,27 @@ struct TreeNode
 class Solution
 {
 public:
-    bool isValidBST(TreeNode *root)
+    bool isSymmetric(TreeNode *root)
     {
-        vector<TreeNode*> table;
-        long long preVal=INT64_MIN;
-        while(root||!table.empty())
-        {
-            if(root)
-            {
-                table.push_back(root);
-                root=root->left;
-            }
-            else
-            {
-                root=table.back();
-                long long tmp=root->val;
-                if(tmp<=preVal)
-                    return false;
-                preVal=root->val;
-                root=root->right;
-                table.pop_back();
-            }
-        }
-        return true;
+        if(root==NULL)
+            return true;
+        if(root->left==NULL&&root->right==NULL)
+            return true;
+        if(root->left==NULL||root->right==NULL)
+            return false;
+        if(root->left->val!=root->right->val)
+            return false;
+        return core(root->left->left,root->right->right)&&core(root->left->right,root->right->left);
+    }
+private:
+    bool core(TreeNode *node1,TreeNode *node2)
+    {
+        if(node1==NULL&&node2==NULL)
+            return true;
+        if(node1==NULL||node2==NULL)
+            return false;
+        if(node1->val!=node2->val)
+            return false;
+        return core(node1->left,node2->right)&&core(node1->right,node2->left);
     }
 };
