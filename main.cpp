@@ -1,5 +1,6 @@
 #include "vector"
 #include "iostream"
+#include "deque"
 
 using namespace std;
 
@@ -13,27 +14,49 @@ struct TreeNode
 class Solution
 {
 public:
-    bool isSymmetric(TreeNode *root)
+    vector<vector<int>> levelOrder(TreeNode *root)
     {
+        vector<vector<int>> ret;
         if(root==NULL)
-            return true;
-        if(root->left==NULL&&root->right==NULL)
-            return true;
-        if(root->left==NULL||root->right==NULL)
-            return false;
-        if(root->left->val!=root->right->val)
-            return false;
-        return core(root->left->left,root->right->right)&&core(root->left->right,root->right->left);
-    }
-private:
-    bool core(TreeNode *node1,TreeNode *node2)
-    {
-        if(node1==NULL&&node2==NULL)
-            return true;
-        if(node1==NULL||node2==NULL)
-            return false;
-        if(node1->val!=node2->val)
-            return false;
-        return core(node1->left,node2->right)&&core(node1->right,node2->left);
+            return ret;
+        deque<TreeNode*> table{root};
+        int currCount=1,nextCount=0;
+        vector<int> currLevel;
+        while(!table.empty())
+        {
+            TreeNode *tmp=table.front();
+            table.pop_front();
+            currLevel.push_back(tmp->val);
+            --currCount;
+            if(tmp->left!=NULL)
+            {
+                table.push_back(tmp->left);
+                ++nextCount;
+            }
+            if(tmp->right!=NULL)
+            {
+                table.push_back(tmp->right);
+                ++nextCount;
+            }
+            if(currCount==0)
+            {
+                ret.push_back(currLevel);
+                currLevel.clear();
+                currCount=nextCount;
+                nextCount=0;
+            }
+        }
+        return ret;
     }
 };
+
+int main()
+{
+    TreeNode test;
+    test.val=1;
+    test.left=NULL;
+    test.right=NULL;
+    Solution s;
+    s.levelOrder(&test);
+    return 0;
+}
