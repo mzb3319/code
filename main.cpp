@@ -4,33 +4,32 @@
 
 using namespace std;
 
-struct TreeNode
+struct TreeLinkNode
 {
     int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int a):val(a),left(NULL),right(NULL){}
+    TreeLinkNode *left;
+    TreeLinkNode *right;
+    TreeLinkNode *next;
+    TreeLinkNode(int a):val(a),left(NULL),right(NULL),next(NULL){}
 };
 
 class Solution
 {
 public:
-    TreeNode *sortedArrayToBST(vector<int> &nums)
+    void connect(TreeLinkNode *root)
     {
-        if(nums.empty())
-            return NULL;
-        return core(nums,0,nums.size()-1);
-    }
-private:
-    TreeNode *core(vector<int> nums,int beg,int end)
-    {
-        if(beg>end)
-            return NULL;
-        int mid=beg+end;
-        mid=mid/2+mid%2;
-        TreeNode *root=new TreeNode(nums[mid]);
-        root->left=core(nums,beg,mid-1);
-        root->right=core(nums,mid+1,end);
-        return root;
+        if(root==NULL)
+            return;
+        if(root->left!=NULL)
+        {
+            root->left->next=root->right;
+
+            if(root->next!=NULL)
+            {
+                root->right->next=root->next->left;
+            }
+        }
+        connect(root->left);
+        connect(root->right);
     }
 };
