@@ -16,26 +16,26 @@ struct TreeNode
 class Solution
 {
 public:
-    int maxPathSum(TreeNode *root)
+    bool isPalindrome(string &s)
     {
-        int ret=INT32_MIN;
-        core(root,ret);
-        return ret;
-    }
-private:
-    int core(TreeNode *node,int &ret)
-    {
-        if(node==NULL)
-            return 0;
-        int left=core(node->left,ret);
-        int right=core(node->right,ret);
-        int tmp=node->val;
-        if(left>0)
-            tmp+=left;
-        if(right>0)
-            tmp+=right;
-        ret=max(tmp,ret);
-        tmp=max(left,right);
-        return tmp>0?tmp+node->val:node->val;
+        int beg=0,end=s.length()-1;
+        while(beg<end)
+        {
+            if(!isalnum(s[beg]))
+            {
+                ++beg;
+                continue;
+            }
+            if(!isalnum(s[end]))
+            {
+                --end;
+                continue;
+            }
+            if(tolower(s[beg])!=tolower(s[end]))
+                return false;
+            ++beg;
+            --end;
+        }
+        return true;
     }
 };
