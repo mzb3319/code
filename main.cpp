@@ -14,36 +14,40 @@ struct TreeNode
 class Solution
 {
 public:
-    vector<vector<int>> levelOrder(TreeNode *root)
+    vector<vector<int>> zigzagLevelOrder(TreeNode *root)
     {
         vector<vector<int>> ret;
         if(root==NULL)
             return ret;
-        deque<TreeNode*> table{root};
-        int currCount=1,nextCount=0;
+        vector<deque<TreeNode*>> table(2);
+        bool direction=true;//true->left2right,false->right2left
+        table[1].push_back(root);
         vector<int> currLevel;
-        while(!table.empty())
+        while(!table[direction].empty())
         {
-            TreeNode *tmp=table.front();
-            table.pop_front();
+            TreeNode *tmp=table[direction].front();
+            table[direction].pop_front();
             currLevel.push_back(tmp->val);
-            --currCount;
-            if(tmp->left!=NULL)
+            if(direction)
             {
-                table.push_back(tmp->left);
-                ++nextCount;
+                if(tmp->left!=NULL)
+                    table[!direction].push_front(tmp->left);
+                if(tmp->right!=NULL)
+                    table[!direction].push_front(tmp->right);
             }
-            if(tmp->right!=NULL)
+            else
             {
-                table.push_back(tmp->right);
-                ++nextCount;
+                if(tmp->right!=NULL)
+                    table[!direction].push_front(tmp->right);
+                if(tmp->left!=NULL)
+                    table[!direction].push_front(tmp->left);
             }
-            if(currCount==0)
+            if(table[direction].empty())
             {
                 ret.push_back(currLevel);
                 currLevel.clear();
-                currCount=nextCount;
-                nextCount=0;
+                table[direction].clear();
+                direction=!direction;
             }
         }
         return ret;
