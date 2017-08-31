@@ -15,26 +15,22 @@ struct TreeNode
 class Solution
 {
 public:
-    TreeNode *buildTree(vector<int> &preorder,vector<int> &inorder)
+    TreeNode *sortedArrayToBST(vector<int> &nums)
     {
-        if(preorder.empty())
+        if(nums.empty())
             return NULL;
-        return core(preorder,0,preorder.size()-1,inorder,0,inorder.size()-1);
+        return core(nums,0,nums.size()-1);
     }
 private:
-    TreeNode *core(vector<int> &preorder,int beg1,int end1,vector<int> &inorder,int beg2,int end2)
+    TreeNode *core(vector<int> nums,int beg,int end)
     {
-        if(beg1>end1)
+        if(beg>end)
             return NULL;
-        TreeNode *root=new TreeNode(preorder[beg1]);
-        int count=0,index=beg2;
-        while(inorder[index]!=preorder[beg1])
-        {
-            ++count;
-            ++index;
-        }
-        root->left=core(preorder,beg1+1,beg1+count,inorder,beg2,index-1);
-        root->right=core(preorder,beg1+count+1,end1,inorder,index+1,end2);
+        int mid=beg+end;
+        mid=mid/2+mid%2;
+        TreeNode *root=new TreeNode(nums[mid]);
+        root->left=core(nums,beg,mid-1);
+        root->right=core(nums,mid+1,end);
         return root;
     }
 };
