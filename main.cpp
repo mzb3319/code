@@ -1,41 +1,69 @@
 #include "vector"
 #include "iostream"
-#include "unordered_map"
+#include "unordered_set"
+#include "bitset"
+#include "deque"
 
 using namespace std;
-
-struct TreeNode
-{
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode *next;
-    TreeNode(int a):val(a),left(NULL),right(NULL),next(NULL){}
-};
 
 class Solution
 {
 public:
-    bool isPalindrome(string &s)
+    int ladderLength(string &beginWord,string &endWord,vector<string> &wordList)
     {
-        int beg=0,end=s.length()-1;
-        while(beg<end)
+        unordered_set<string> table(wordList.begin(),wordList.end());
+        if(table.find(endWord)==table.end())
+            return 0;
+        deque<string> q{beginWord};
+        int ret=0,currCount=1,nextCount=0;
+        while(!q.empty())
         {
-            if(!isalnum(s[beg]))
+            if(q.front()==endWord)
+                return ret+1;
+            int count=getNext(q.front(),table,q);
+            nextCount+=count;
+            --currCount;
+            q.pop_front();
+            if(currCount==0)
             {
-                ++beg;
-                continue;
+                ++ret;
+                currCount=nextCount;
+                nextCount=0;
             }
-            if(!isalnum(s[end]))
-            {
-                --end;
-                continue;
-            }
-            if(tolower(s[beg])!=tolower(s[end]))
-                return false;
-            ++beg;
-            --end;
         }
-        return true;
+        return 0;
+    }
+private:
+    int getNext(string a,unordered_set<string> &table,deque<string> &q)
+    {
+        int count=0;
+        for(int i=0;i<a.size();++i)
+        {
+            for(int j=0;j<26;++j)
+            {
+                char c=a[i];
+                if(c-'a'!=j)
+                {
+                    a[i]=j+'a';
+                    if(table.find(a)!=table.end())
+                    {
+                        q.push_back(a);
+                        ++count;
+                        table.erase(a);
+                    }
+                    a[i]=c;
+                }
+            }
+        }
+        return count;
     }
 };
+
+int main()
+{
+    string bw="leet",ew="code";
+    vector<string> wl{"lest","leet","lose","code","lode","robe","lost"};
+    Solution s;
+    cout<<s.ladderLength(bw,ew,wl);
+    return 0;
+}
