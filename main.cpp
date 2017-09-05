@@ -1,54 +1,48 @@
-#include "iostream"
 #include "vector"
+#include "string"
+#include "unordered_set"
+#include "algorithm"
 
 using namespace std;
-
-struct RandomListNode
-{
-    int label;
-    RandomListNode *next,*random;
-    RandomListNode(int x):label(x),next(nullptr),random(nullptr){}
-};
 
 class Solution
 {
 public:
-    RandomListNode *copyRandomList(RandomListNode *head)
+    bool wordBreak(string s,vector<string> &wordDict)
     {
-        if(head==nullptr)
-            return nullptr;
-        RandomListNode *node=head;
-        while(node)
+        unordered_set<string> Dict(wordDict.begin(),wordDict.end());
+        vector<int> table(s.length(),-1);
+        return core(s,0,table,Dict);
+    }
+private:
+    bool core(string &s,int index,vector<int> &table,unordered_set<string> &dict)
+    {
+        if(index==s.length())
+            return true;
+        if(table[index]!=-1)
+            return table[index]==0?false:true;
+        for(int i=index;i<s.length();++i)
         {
-            RandomListNode *tmp=new RandomListNode(node->label);
-            tmp->next=node->next;
-            node->next=tmp;
-            node=tmp->next;
+            string tmp=s.substr(index,i-index+1);
+            auto f=dict.find(tmp);
+            if(f==dict.end())
+                continue;
+            if(core(s,i+1,table,dict))
+            {
+                table[index]=1;
+                return true;
+            }
         }
-        node=head;
-        while(node)
-        {
-            if(node->random)
-                node->next->random=node->random->next;
-            node=node->next->next;
-        }
-        RandomListNode h(1),* node1=&h;
-        node=head;
-        while(node)
-        {
-            node1->next=node->next;
-            node1=node1->next;
-            node->next=node1->next;
-            node=node->next;
-        }
-        return h.next;
+        table[index]=0;
+        return false;
     }
 };
 
 int main()
 {
-    RandomListNode head(-1),*ret;
-    Solution s;
-    ret=s.copyRandomList(&head);
+    string s="leetcode";
+    vector<string> dict{"leet","code"};
+    Solution ss;
+    ss.wordBreak(s,dict);
     return 0;
 }
