@@ -1,49 +1,54 @@
 #include "iostream"
 #include "vector"
-#include "algorithm"
-#include "unordered_map"
 
 using namespace std;
+
+struct RandomListNode
+{
+    int label;
+    RandomListNode *next,*random;
+    RandomListNode(int x):label(x),next(nullptr),random(nullptr){}
+};
 
 class Solution
 {
 public:
-    vector<vector<string>> partition(string &s)
+    RandomListNode *copyRandomList(RandomListNode *head)
     {
-        vector<vector<string>> ret;
-        vector<string> tmp;
-        core(s,0,tmp,ret);
-        return ret;
-    }
-private:
-    void core(string &s,int index,vector<string> &tmp,vector<vector<string>> &ret)
-    {
-        if(index==s.length())
+        if(head==nullptr)
+            return nullptr;
+        RandomListNode *node=head;
+        while(node)
         {
-            ret.push_back(tmp);
-            return;
+            RandomListNode *tmp=new RandomListNode(node->label);
+            tmp->next=node->next;
+            node->next=tmp;
+            node=tmp->next;
         }
-        for(int i=index;i<s.length();++i)
+        node=head;
+        while(node)
         {
-            int l=index,r=i;
-            while(l<=r&&s[l]==s[r])
-            {
-                l++;
-                --r;
-            }
-            if(l>r)
-            {
-                tmp.push_back(s.substr(index,i-index+1));
-                core(s,i+1,tmp,ret);
-                tmp.pop_back();
-            }
+            if(node->random)
+                node->next->random=node->random->next;
+            node=node->next->next;
         }
+        RandomListNode h(1),* node1=&h;
+        node=head;
+        while(node)
+        {
+            node1->next=node->next;
+            node1=node1->next;
+            node->next=node1->next;
+            node=node->next;
+        }
+        return h.next;
     }
 };
+
 int main()
 {
-    unsigned  char a=0x80;
-    unsigned char b=a>>5;
-    cout<<(int)b<<endl;
+    RandomListNode head(-1),*ret;
+    Solution s;
+    ret=s.copyRandomList(&head);
     return 0;
 }
