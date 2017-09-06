@@ -2,39 +2,55 @@
 #include "string"
 #include "unordered_set"
 #include "algorithm"
+#include "unordered_map"
 
 using namespace std;
 
 class Solution
 {
 public:
-    bool wordBreak(string s,vector<string> &wordDict)
+    vector<string> wordBreak(string s,vector<string> &wordDict)
     {
-        unordered_set<string> Dict(wordDict.begin(),wordDict.end());
-        vector<int> table(s.length(),-1);
-        return core(s,0,table,Dict);
-    }
-private:
-    bool core(string &s,int index,vector<int> &table,unordered_set<string> &dict)
-    {
-        if(index==s.length())
-            return true;
-        if(table[index]!=-1)
-            return table[index]==0?false:true;
-        for(int i=index;i<s.length();++i)
+        unordered_set<string> dict(wordDict.begin(),wordDict.end());
+        vector<vector<int>> table(s.length());
+        for(int i=s.length()-1;i>=0;--i)
         {
-            string tmp=s.substr(index,i-index+1);
-            auto f=dict.find(tmp);
-            if(f==dict.end())
-                continue;
-            if(core(s,i+1,table,dict))
+            for(int j=i;j<s.length();++j)
             {
-                table[index]=1;
-                return true;
+                int len=j-i+1;
+                string tmp=s.substr(i,len);
+                auto f=dict.find(tmp);
+                if(f==dict.end())
+                    continue;
+                if(j+1==s.length()||!table[j+1].empty())
+                    table[i].push_back(len);
             }
         }
-        table[index]=0;
-        return false;
+        vector<string> ret;
+        string tmp;
+        core(s,table,0,tmp,ret);
+        return ret;
+    }
+private:
+    void core(string &s,vector<vector<int>> &table,int index,string &tmp,vector<string> &ret)
+    {
+        if(index==s.length())
+        {
+            ret.push_back(tmp);
+            return;
+        }
+        for(int i=0;i<table[index].size();++i)
+        {
+            int len=table[index][i];
+            if(!tmp.empty())
+                tmp+=" ";
+            string str=s.substr(index,len);
+            tmp+=str;
+            core(s,table,index+len,tmp,ret);
+            tmp.erase(tmp.size()-str.length(),str.length());
+            if(tmp.back()==' ')
+                tmp.pop_back();
+        }
     }
 };
 
