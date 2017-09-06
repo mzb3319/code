@@ -1,143 +1,94 @@
 #include "iostream"
 #include "vector"
-#include "unordered_map"
-#include "list"
 
 using namespace std;
 
-struct List
+struct ListNode
 {
     int val;
-    int key;
-    List *next;
-    List *pre;
-    List(int k,int v):key(k),val(v),next(nullptr),pre(nullptr){}
+    ListNode *next;
+    ListNode(int a):val(a),next(nullptr){}
 };
 
-//class LRUCache
-//{
-//public:
-//    LRUCache(int capacity):cap(capacity){}
-//    int get(int key)
-//    {
-//        auto f=table.find(key);
-//        if(f==table.end())
-//            return -1;
-//        if(table.size()<2)
-//            return f->second->val;
-//        if(f->second->next== nullptr)
-//            return f->second->val;
-//        if(f->second->pre== nullptr)
-//        {
-//            tail->next=f->second;
-//            f->second->pre=tail;
-//            tail=f->second;
-//
-//            head=f->second->next;
-//            f->second->next= nullptr;
-//        }
-//        else
-//        {
-//            f->second->pre->next=f->second->next;
-//            f->second->next->pre=f->second->pre;
-//            tail->next=f->second;
-//            f->second->pre=tail;
-//            f->second->next= nullptr;
-//            tail=f->second;
-//        }
-//        return f->second->val;
-//    }
-//    void put(int key,int value)
-//    {
-//        auto f=table.find(key);
-//        if(f!=table.end())
-//        {
-//            f->second->val=value;
-//            get(key);
-//        }
-//        if(table.empty())
-//        {
-//            head=tail=new List(key,value);
-//            table.insert({key,head});
-//        }
-//        else if(table.size()<cap)
-//        {
-//            tail->next=new List(key,value);
-//            table.insert({key,tail->next});
-//            tail->next->pre=tail;
-//            tail=tail->next;
-//        }
-//        else
-//        {
-//            if(cap==1)
-//            {
-//                table.erase(head->key);
-//                head->key=key;
-//                head->val=value;
-//                table.insert({key,head});
-//            }
-//            else
-//            {
-//                List *tmp=head;
-//                table.erase(head->key);
-//                head=head->next;
-//                delete tmp;
-//                tmp=new List(key,value);
-//                table.insert({key,tmp});
-//                tail->next=tmp;
-//                tmp->pre=tail;
-//                tail=tmp;
-//            }
-//        }
-//    }
-//private:
-//    int cap;
-//    List *head,*tail;
-//    unordered_map<int,List*> table;
-//};
-
-class LRUCache
+class Solution
 {
 public:
-    LRUCache(int cap):_cap(cap){}
-    int get(int key)
+    ListNode *sortList(ListNode *head)
     {
-        auto f=table.find(key);
-        if(f==table.end())
-            return -1;
-        order.erase(f->second.second);
-        order.push_back(key);
-        f->second.second=--order.end();
-        return f->second.first;
-    }
-    void put(int key,int value)
-    {
-        auto f=table.find(key);
-        if(f!=table.end())
+        if(head== nullptr)
+            return head;
+        int len=0;
+        ListNode *p=head;
+        while(p)
         {
-            f->second.first=value;
-            get(key);
-            return;
+            ++len;
+            p=p->next;
         }
-        if(table.size()==_cap)
-        {
-            table.erase(order.front());
-            order.pop_front();
-        }
-        order.push_back(key);
-        table.insert({key,{value,--order.end()}});
+        return core(head,len);
     }
 private:
-    int _cap;
-    list<int> order;
-    unordered_map<int,pair<int,list<int>::iterator>> table;
+    ListNode *core(ListNode *head,int len)
+    {
+        if(len==1)
+            return head;
+        int mid=len/2;
+        ListNode *right=head,*left=head,*pre= nullptr;
+        for(int i=0;i<mid;++i)
+        {
+            pre=right;
+            right=right->next;
+        }
+        pre->next= nullptr;
+        //sort left
+        left=core(left,len/2);
+        //sort right
+        right=core(right,len/2+len%2);
+
+        return merge(left,right);
+    }
+    ListNode *merge(ListNode *left,ListNode *right)
+    {
+        ListNode head(-1),*p=&head;
+        while(left!= nullptr||right!= nullptr)
+        {
+            if(left== nullptr)
+            {
+                p->next=right;
+                break;
+            }
+            else if(right== nullptr)
+            {
+                p->next=left;
+                break;
+            }
+
+            if(left->val>right->val)
+            {
+                p->next=right;
+                p=p->next;
+                right=right->next;
+            }
+            else
+            {
+                p->next=left;
+                p=p->next;
+                left=left->next;
+            }
+        }
+        return head.next;
+    }
 };
 
 int main()
 {
-    LRUCache lru(2);
-    lru.put(2,3);
-    lru.put(1,4);
-    lru.get(2);
+    vector<int> num{1,23,2,4,2};
+    ListNode head(-1),*p=&head;
+    for(int i=0;i<num.size();++i)
+    {
+        p->next=new ListNode(num[i]);
+        p=p->next;
+    }
+    Solution s;
+    s.sortList(head.next);
     return 0;
 }
