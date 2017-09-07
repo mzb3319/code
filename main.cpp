@@ -1,76 +1,54 @@
 #include "iostream"
 #include "vector"
-#include "unordered_map"
 
 using namespace std;
 
 class Solution
 {
 public:
-    string fractionToDecimal(int numerator,int denominator)
+    int majorityElement(vector<int> &nums)
     {
-        long long n=numerator,d=denominator;
-        if(n==0)
-            return "0";
-        bool flag=false;
-        if(n<0)
+        int count=0,ret=0;
+        for(int n:nums)
         {
-            flag=!flag;
-            n=-n;
-        }
-        if(d<0)
-        {
-            flag=!flag;
-            d=-d;
-        }
-        unordered_map<long long,long long> table;
-        string ret;
-        bool hasDot=false;
-        while(true)
-        {
-            auto f=table.find(n);
-            if(f!=table.end())
+            if(count==0)
             {
-                ret.insert(f->second+1,"(");
-                ret.push_back(')');
-                break;
+                ret=n;
+                count=1;
+                continue;
             }
-            if(n<d)
-            {
-                if(hasDot)
-                    table.insert({n,ret.size()-1});
-                n*=10;
-                if(hasDot)
-                    ret+="0";
-                else
-                    ret+=".";
-                hasDot=true;
-            }
+            if(n==ret)
+                ++count;
             else
-            {
-                if(hasDot)
-                    table.insert({n,ret.size()-1});
-                ret+=to_string(n/d);
-                n%=d;
-                if(n)
-                {
-                    if(hasDot)
-                        n*=10;
-                }
-                else
-                    break;
-            }
+                --count;
         }
-        if(ret.front()=='.')
-            ret="0"+ret;
-        if(flag)
-            ret="-"+ret;
         return ret;
     }
+    //遇到有序数组时性能严重下降
+    int majorityElement1(vector<int> &nums)
+    {
+        return core(nums,0,nums.size()-1);
+    }
+
+private:
+    int core(vector<int> &nums,int beg,int end)
+    {
+        int p=beg-1;
+        for(int i=beg;i<=end;++i)
+        {
+            if(nums[i]<=nums[end])
+            {
+                int tmp=nums[i];
+                nums[i]=nums[++p];
+                nums[p]=tmp;
+            }
+        }
+        int mid=nums.size()/2;
+        if(p==mid)
+            return nums[p];
+        else if(p>mid)
+            return core(nums,beg,p-1);
+        else
+            return core(nums,p+1,end);
+    }
 };
-int main()
-{
-    Solution s;
-    cout<<s.fractionToDecimal(-1,-2147483648)<<endl;
-    return 0;
-}
