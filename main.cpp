@@ -1,23 +1,76 @@
 #include "iostream"
 #include "vector"
+#include "unordered_map"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int findPeakElement(vector<int> &nums)
+    string fractionToDecimal(int numerator,int denominator)
     {
-        if(nums.empty())
-            -1;
-        long long a=INT64_MIN,b=INT64_MIN;
-        for(int i=0;i<nums.size();++i)
+        long long n=numerator,d=denominator;
+        if(n==0)
+            return "0";
+        bool flag=false;
+        if(n<0)
         {
-            a=i-1<0?INT32_MIN:nums[i-1];
-            b=i+1>=nums.size()?INT32_MIN:nums[i+1];
-            if(nums[i]>a&&nums[i]>b)
-                return i;
+            flag=!flag;
+            n=-n;
         }
-        return -1;
+        if(d<0)
+        {
+            flag=!flag;
+            d=-d;
+        }
+        unordered_map<long long,long long> table;
+        string ret;
+        bool hasDot=false;
+        while(true)
+        {
+            auto f=table.find(n);
+            if(f!=table.end())
+            {
+                ret.insert(f->second+1,"(");
+                ret.push_back(')');
+                break;
+            }
+            if(n<d)
+            {
+                if(hasDot)
+                    table.insert({n,ret.size()-1});
+                n*=10;
+                if(hasDot)
+                    ret+="0";
+                else
+                    ret+=".";
+                hasDot=true;
+            }
+            else
+            {
+                if(hasDot)
+                    table.insert({n,ret.size()-1});
+                ret+=to_string(n/d);
+                n%=d;
+                if(n)
+                {
+                    if(hasDot)
+                        n*=10;
+                }
+                else
+                    break;
+            }
+        }
+        if(ret.front()=='.')
+            ret="0"+ret;
+        if(flag)
+            ret="-"+ret;
+        return ret;
     }
 };
+int main()
+{
+    Solution s;
+    cout<<s.fractionToDecimal(-1,-2147483648)<<endl;
+    return 0;
+}
