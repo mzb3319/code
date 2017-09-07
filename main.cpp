@@ -1,56 +1,64 @@
 #include "iostream"
 #include "vector"
-#include "string"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int evalRPN(vector<string> &tokens)
+    int maxProduct(vector<int> &nums)
     {
-        if(tokens.empty())
-            return -1;
-        vector<int> stack;
-        for(int i=0;i<tokens.size();++i)
+        int maxP=INT32_MIN,posP=INT32_MIN,allP=INT32_MIN,countNeg=0,firstNeg=1,neg=1;
+        for(int i=0;i<nums.size();++i)
         {
-            if(tokens[i]=="+")
+            if(nums[i]==0)
             {
-                int a=stack.back();
-                stack.pop_back();
-                int b=stack.back();
-                stack.pop_back();
-                stack.push_back(a+b);
+                maxP=max(maxP,allP);
+                if(countNeg>1)
+                {
+                    maxP=max(maxP,allP/(firstNeg));
+                    if(posP==INT32_MIN)
+                        posP=1;
+                    maxP=max(maxP,allP/(neg*posP));
+                }
+                allP*=nums[i];
+                maxP=max(maxP,allP);
+                posP=INT32_MIN;allP=INT32_MIN;countNeg=0;firstNeg=1;neg=1;
+                continue;
             }
-            else if(tokens[i]=="-")
+            if(posP==INT32_MIN)
+                posP=1;
+            posP*=nums[i];
+            if(allP==INT32_MIN)
+                allP=1;
+            allP*=nums[i];
+
+            maxP=max(maxP,posP);
+            if(nums[i]<0)
             {
-                int a=stack.back();
-                stack.pop_back();
-                int b=stack.back();
-                stack.pop_back();
-                stack.push_back(b-a);
-            }
-            else if(tokens[i]=="*")
-            {
-                int a=stack.back();
-                stack.pop_back();
-                int b=stack.back();
-                stack.pop_back();
-                stack.push_back(a*b);
-            }
-            else if(tokens[i]=="/")
-            {
-                int a=stack.back();
-                stack.pop_back();
-                int b=stack.back();
-                stack.pop_back();
-                stack.push_back(b/a);
-            }
-            else
-            {
-                stack.push_back(stoi(tokens[i]));
+                neg=nums[i];
+                countNeg++;
+                if(countNeg==1)
+                    firstNeg=posP;
+                posP=INT32_MIN;
             }
         }
-        return stack.back();
+        maxP=max(maxP,allP);
+        if(countNeg>1)
+        {
+            maxP=max(maxP,allP/firstNeg);
+            if(posP==INT32_MIN)
+                posP=1;
+            maxP=max(maxP,allP/(neg*posP));
+        }
+        return maxP;
     }
 };
+
+int main()
+{
+    Solution s;
+    vector<int> nums{-3,-4};
+    s.maxProduct(nums);
+    return 0;
+}
