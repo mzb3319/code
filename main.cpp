@@ -1,94 +1,68 @@
 #include "iostream"
+#include "map"
 #include "vector"
+#include "unordered_set"
 
 using namespace std;
 
-struct ListNode
+struct Point
 {
-    int val;
-    ListNode *next;
-    ListNode(int a):val(a),next(nullptr){}
+    int x;
+    int y;
+    Point():x(0),y(0){}
+    Point(int a,int b):x(a),y(b){}
 };
 
 class Solution
 {
 public:
-    ListNode *sortList(ListNode *head)
+    int maxPoints(vector<Point> &points)
     {
-        if(head== nullptr)
-            return head;
-        int len=0;
-        ListNode *p=head;
-        while(p)
+        int ret=0;
+        for(int i=0;i<points.size();++i)
         {
-            ++len;
-            p=p->next;
+            map<pair<int,int>,int> line;//这里很重要,必须在这里统计数量
+            int overlap=0,currMax=0,vertical=0;
+            //以第i个点为起点计算和之后个点组成的直线的斜率
+            for(int j=i+1;j<points.size();++j)
+            {
+                //和起点相同的点,在最后一起加到总节点数上
+                if(points[i].x==points[j].x&&points[i].y==points[j].y)
+                {
+                    ++overlap;
+                }
+                else if(points[i].x==points[j].x)// x=b;竖线单独计算
+                {
+                    ++vertical;
+                }
+                else//正常的直线,因为起点都一样,所以只用斜率就能单独表示一条直线
+                {
+                    int a=points[i].x-points[j].x;
+                    int b=points[i].y-points[j].y;
+                    int c=help(a,b);//求最大公约数,用分数表示斜率
+                    a/=c;
+                    b/=c;
+                    ++line[make_pair(a,b)];//斜率为b/a的直线上的点加1
+                    currMax=max(currMax,line[make_pair(a,b)]);//line中最多点的直线
+                }
+                currMax=max(currMax,vertical);//考虑竖线
+            }
+            ret=max(ret,currMax+overlap+1);//+voerlap包含和点相同的点,+1包含起点本身
         }
-        return core(head,len);
+        return ret;
     }
 private:
-    ListNode *core(ListNode *head,int len)
+    int help(int a,int b)
     {
-        if(len==1)
-            return head;
-        int mid=len/2;
-        ListNode *right=head,*left=head,*pre= nullptr;
-        for(int i=0;i<mid;++i)
+        if(b==0)
+            return a;
+        int c=a%b;
+        while(c)
         {
-            pre=right;
-            right=right->next;
+            a=b;
+            b=c;
+            c=a%b;
         }
-        pre->next= nullptr;
-        //sort left
-        left=core(left,len/2);
-        //sort right
-        right=core(right,len/2+len%2);
-
-        return merge(left,right);
-    }
-    ListNode *merge(ListNode *left,ListNode *right)
-    {
-        ListNode head(-1),*p=&head;
-        while(left!= nullptr||right!= nullptr)
-        {
-            if(left== nullptr)
-            {
-                p->next=right;
-                break;
-            }
-            else if(right== nullptr)
-            {
-                p->next=left;
-                break;
-            }
-
-            if(left->val>right->val)
-            {
-                p->next=right;
-                p=p->next;
-                right=right->next;
-            }
-            else
-            {
-                p->next=left;
-                p=p->next;
-                left=left->next;
-            }
-        }
-        return head.next;
+        return b;
     }
 };
-
-int main()
-{
-    vector<int> num{1,23,2,4,2};
-    ListNode head(-1),*p=&head;
-    for(int i=0;i<num.size();++i)
-    {
-        p->next=new ListNode(num[i]);
-        p=p->next;
-    }
-    Solution s;
-    s.sortList(head.next);
-    return 0;
-}
