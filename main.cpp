@@ -6,23 +6,41 @@ using namespace std;
 class Solution
 {
 public:
-    int rob(vector<int> &nums)
+    int numIslands(vector<vector<char>> &grid)
     {
-        if(nums.empty())
+        if(grid.empty()||grid.front().empty())
             return 0;
-        vector<int> moneys(nums.size(),0);
         int ret=0;
-        for(int i=0;i<nums.size();++i)
+        for(int i=0;i<grid.size();++i)
         {
-            int a=0;
-            if(i-2>=0)
-                a=moneys[i-2];
-            int b=0;
-            if(i-3>=0)
-                b=moneys[i-3];
-            moneys[i]=nums[i]+max(a,b);
-            ret=max(ret,moneys[i]);
+            for(int j=0;j<grid.front().size();++j)
+            {
+                if(grid[i][j]=='1')
+                {
+                    ++ret;
+                    check(grid,i,j);
+                }
+            }
         }
         return ret;
     }
+private:
+    void check(vector<vector<char>> &grid,int i,int j)
+    {
+        if(i<0||i>=grid.size()||j<0||j>=grid.front().size()||grid[i][j]=='0')
+            return;
+        grid[i][j]='0';
+        check(grid,i-1,j);
+        check(grid,i+1,j);
+        check(grid,i,j-1);
+        check(grid,i,j+1);
+    }
 };
+
+int main()
+{
+    vector<vector<char>> grid{{'1','1','1','1','0'},{'1','1','0','1','0'},{'1','1','0','0','0'},{'0','0','0','0','0'}};
+    Solution s;
+    s.numIslands(grid);
+    return 0;
+}
