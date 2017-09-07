@@ -1,64 +1,57 @@
-#include "iostream"
 #include "vector"
+#include "iostream"
 
 using namespace std;
 
-class Solution
+class MinStack
 {
 public:
-    int maxProduct(vector<int> &nums)
+    MinStack()
     {
-        int maxP=INT32_MIN,posP=INT32_MIN,allP=INT32_MIN,countNeg=0,firstNeg=1,neg=1;
-        for(int i=0;i<nums.size();++i)
-        {
-            if(nums[i]==0)
-            {
-                maxP=max(maxP,allP);
-                if(countNeg>1)
-                {
-                    maxP=max(maxP,allP/(firstNeg));
-                    if(posP==INT32_MIN)
-                        posP=1;
-                    maxP=max(maxP,allP/(neg*posP));
-                }
-                allP*=nums[i];
-                maxP=max(maxP,allP);
-                posP=INT32_MIN;allP=INT32_MIN;countNeg=0;firstNeg=1;neg=1;
-                continue;
-            }
-            if(posP==INT32_MIN)
-                posP=1;
-            posP*=nums[i];
-            if(allP==INT32_MIN)
-                allP=1;
-            allP*=nums[i];
 
-            maxP=max(maxP,posP);
-            if(nums[i]<0)
-            {
-                neg=nums[i];
-                countNeg++;
-                if(countNeg==1)
-                    firstNeg=posP;
-                posP=INT32_MIN;
-            }
-        }
-        maxP=max(maxP,allP);
-        if(countNeg>1)
-        {
-            maxP=max(maxP,allP/firstNeg);
-            if(posP==INT32_MIN)
-                posP=1;
-            maxP=max(maxP,allP/(neg*posP));
-        }
-        return maxP;
     }
+    void push(int x)
+    {
+        stack.push_back(x);
+        if(minStack.empty()||minStack.back()>x)
+            minStack.push_back(x);
+        else
+        {
+            int tmp=minStack.back();
+            minStack.push_back(tmp);
+        }
+    }
+    void pop()
+    {
+        if(stack.empty())
+            throw(runtime_error("empty stack"));
+        stack.pop_back();
+        minStack.pop_back();
+    }
+    int top()
+    {
+        if(stack.empty())
+            throw(runtime_error("empty stack"));
+        return stack.back();
+    }
+    int getMin()
+    {
+        if(minStack.empty())
+            throw(runtime_error("empty stack"));
+        return minStack.back();
+    }
+private:
+    vector<int> stack;
+    vector<int> minStack;
 };
-
 int main()
 {
-    Solution s;
-    vector<int> nums{-3,-4};
-    s.maxProduct(nums);
+    MinStack stack;
+    try{
+        stack.pop();
+    }catch(runtime_error(err))
+    {
+        cout<<err.what()<<endl;
+    }
     return 0;
 }
