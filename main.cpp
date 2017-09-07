@@ -1,39 +1,23 @@
 #include "iostream"
+#include "vector"
 
 using namespace std;
-
-struct ListNode
-{
-    int val;
-    ListNode *next;
-    ListNode(int a):val(a),next(nullptr){}
-};
 
 class Solution
 {
 public:
-    ListNode *getIntersectionNode(ListNode *headA,ListNode *headB)
+    int findPeakElement(vector<int> &nums)
     {
-        if(headA== nullptr||headB== nullptr)
-            return nullptr;
-        ListNode *h1=headA,*h2=headB;
-        int count=2;
-        while(count)
+        if(nums.empty())
+            -1;
+        long long a=INT64_MIN,b=INT64_MIN;
+        for(int i=0;i<nums.size();++i)
         {
-            if(h1==h2)
-                return h1;
-            if(h1)
-                h1=h1->next;
-            else
-            {
-                h1=headB;
-                --count;
-            }
-            if(h2)
-                h2=h2->next;
-            else
-                h2=headA;
+            a=i-1<0?INT32_MIN:nums[i-1];
+            b=i+1>=nums.size()?INT32_MIN:nums[i+1];
+            if(nums[i]>a&&nums[i]>b)
+                return i;
         }
-        return nullptr;
+        return -1;
     }
 };
