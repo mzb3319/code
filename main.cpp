@@ -1,57 +1,39 @@
-#include "vector"
 #include "iostream"
 
 using namespace std;
 
-class MinStack
+struct ListNode
+{
+    int val;
+    ListNode *next;
+    ListNode(int a):val(a),next(nullptr){}
+};
+
+class Solution
 {
 public:
-    MinStack()
+    ListNode *getIntersectionNode(ListNode *headA,ListNode *headB)
     {
-
-    }
-    void push(int x)
-    {
-        stack.push_back(x);
-        if(minStack.empty()||minStack.back()>x)
-            minStack.push_back(x);
-        else
+        if(headA== nullptr||headB== nullptr)
+            return nullptr;
+        ListNode *h1=headA,*h2=headB;
+        int count=2;
+        while(count)
         {
-            int tmp=minStack.back();
-            minStack.push_back(tmp);
+            if(h1==h2)
+                return h1;
+            if(h1)
+                h1=h1->next;
+            else
+            {
+                h1=headB;
+                --count;
+            }
+            if(h2)
+                h2=h2->next;
+            else
+                h2=headA;
         }
+        return nullptr;
     }
-    void pop()
-    {
-        if(stack.empty())
-            throw(runtime_error("empty stack"));
-        stack.pop_back();
-        minStack.pop_back();
-    }
-    int top()
-    {
-        if(stack.empty())
-            throw(runtime_error("empty stack"));
-        return stack.back();
-    }
-    int getMin()
-    {
-        if(minStack.empty())
-            throw(runtime_error("empty stack"));
-        return minStack.back();
-    }
-private:
-    vector<int> stack;
-    vector<int> minStack;
 };
-int main()
-{
-    MinStack stack;
-    try{
-        stack.pop();
-    }catch(runtime_error(err))
-    {
-        cout<<err.what()<<endl;
-    }
-    return 0;
-}
