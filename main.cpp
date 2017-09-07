@@ -1,46 +1,32 @@
 #include "iostream"
 #include "vector"
+#include "unordered_set"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int numIslands(vector<vector<char>> &grid)
+    bool isHappy(int n)
     {
-        if(grid.empty()||grid.front().empty())
-            return 0;
-        int ret=0;
-        for(int i=0;i<grid.size();++i)
+        unordered_set<int> table{n};
+        while(true)
         {
-            for(int j=0;j<grid.front().size();++j)
+            int tmp=0;
+            while(n)
             {
-                if(grid[i][j]=='1')
-                {
-                    ++ret;
-                    check(grid,i,j);
-                }
+                int m=n%10;
+                tmp+=m*m;
+                n/=10;
             }
+            if(tmp==1)
+                return true;
+            auto f=table.find(tmp);
+            if(f!=table.end())
+                return false;
+            n=tmp;
+            table.insert(tmp);
         }
-        return ret;
-    }
-private:
-    void check(vector<vector<char>> &grid,int i,int j)
-    {
-        if(i<0||i>=grid.size()||j<0||j>=grid.front().size()||grid[i][j]=='0')
-            return;
-        grid[i][j]='0';
-        check(grid,i-1,j);
-        check(grid,i+1,j);
-        check(grid,i,j-1);
-        check(grid,i,j+1);
+        return false;
     }
 };
-
-int main()
-{
-    vector<vector<char>> grid{{'1','1','1','1','0'},{'1','1','0','1','0'},{'1','1','0','0','0'},{'0','0','0','0','0'}};
-    Solution s;
-    s.numIslands(grid);
-    return 0;
-}
