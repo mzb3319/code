@@ -1,30 +1,26 @@
 #include "iostream"
-#include "vector"
 
 using namespace std;
 
 class Solution
 {
 public:
-    void rotate(vector<int> &nums,int k)
+    uint32_t reverseBits(uint32_t n)
     {
-        int beg=0,end=nums.size()-1;
+        int beg=1,end=32;
         while(beg<end)
-            swap(nums,beg++,end--);
-        beg=0;
-        end=k-1;
-        while(beg<end)
-            swap(nums,beg++,end--);
-        beg=k;
-        end=nums.size()-1;
-        while(beg<end)
-            swap(nums,beg++,end--);
-    }
-private:
-    void swap(vector<int> &nums,int a,int b)
-    {
-        int tmp=nums[a];
-        nums[a]=nums[b];
-        nums[b]=tmp;
+        {
+            uint32_t a=1<<(32-beg),b=1<<(32-end);
+            a&=n;
+            b&=n;
+            if(a>>(32-beg)!=b>>(32-end))
+            {
+                n^=(1<<(32-beg));
+                n^=(1<<(32-end));
+            }
+            ++beg;
+            --end;
+        }
+        return n;
     }
 };
