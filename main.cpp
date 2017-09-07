@@ -1,26 +1,19 @@
 #include "iostream"
+#include "vector"
 
 using namespace std;
 
 class Solution
 {
 public:
-    uint32_t reverseBits(uint32_t n)
+    int hammingWeight(uint32_t n)
     {
-        int beg=1,end=32;
-        while(beg<end)
+        int ret=0;
+        while(n)
         {
-            uint32_t a=1<<(32-beg),b=1<<(32-end);
-            a&=n;
-            b&=n;
-            if(a>>(32-beg)!=b>>(32-end))
-            {
-                n^=(1<<(32-beg));
-                n^=(1<<(32-end));
-            }
-            ++beg;
-            --end;
+            ++ret;
+            n=(n-1)&n;
         }
-        return n;
+        return ret;
     }
 };
