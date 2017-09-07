@@ -1,23 +1,30 @@
 #include "iostream"
-#include "string"
 #include "vector"
-#include "algorithm"
 
 using namespace std;
 
 class Solution
 {
 public:
-    string largestNumber(vector<int> &nums)
+    void rotate(vector<int> &nums,int k)
     {
-        sort(nums.begin(),nums.end(),[](const int &a,const int &b){string sa=to_string(a),sb=to_string(b);return sa+sb>sb+sa?true:false;});
-        string ret;
-        for(int n:nums)
-        {
-            ret+=to_string(n);
-        }
-        if(ret.front()=='0')
-            return "0";
-        return ret;
+        int beg=0,end=nums.size()-1;
+        while(beg<end)
+            swap(nums,beg++,end--);
+        beg=0;
+        end=k-1;
+        while(beg<end)
+            swap(nums,beg++,end--);
+        beg=k;
+        end=nums.size()-1;
+        while(beg<end)
+            swap(nums,beg++,end--);
+    }
+private:
+    void swap(vector<int> &nums,int a,int b)
+    {
+        int tmp=nums[a];
+        nums[a]=nums[b];
+        nums[b]=tmp;
     }
 };
