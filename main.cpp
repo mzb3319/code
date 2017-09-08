@@ -1,32 +1,28 @@
 #include "iostream"
 #include "vector"
-#include "unordered_set"
 
 using namespace std;
+
+struct ListNode
+{
+    int val;
+    ListNode *next;
+    ListNode(int a):val(a),next(nullptr){}
+};
 
 class Solution
 {
 public:
-    bool isHappy(int n)
+    ListNode *reverseList(ListNode *head)
     {
-        unordered_set<int> table{n};
-        while(true)
+        ListNode *p= nullptr;
+        while(head)
         {
-            int tmp=0;
-            while(n)
-            {
-                int m=n%10;
-                tmp+=m*m;
-                n/=10;
-            }
-            if(tmp==1)
-                return true;
-            auto f=table.find(tmp);
-            if(f!=table.end())
-                return false;
-            n=tmp;
-            table.insert(tmp);
+            ListNode *tmp=head->next;
+            head->next=p;
+            p=head;
+            head=tmp;
         }
-        return false;
+        return p;
     }
 };
