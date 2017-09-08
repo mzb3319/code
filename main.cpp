@@ -1,28 +1,53 @@
 #include "iostream"
 #include "vector"
+#include "algorithm"
+#include "unordered_map"
+#include "unordered_set"
 
 using namespace std;
-
-struct ListNode
-{
-    int val;
-    ListNode *next;
-    ListNode(int a):val(a),next(nullptr){}
-};
 
 class Solution
 {
 public:
-    ListNode *reverseList(ListNode *head)
+    bool canFinish(int numCourses,vector<pair<int,int>> &prerequisites)
     {
-        ListNode *p= nullptr;
-        while(head)
+        unordered_map<int,vector<int>> table;
+        unordered_map<int,bool> flag;
+        for(auto &p:prerequisites)
         {
-            ListNode *tmp=head->next;
-            head->next=p;
-            p=head;
-            head=tmp;
+            table[p.second].push_back(p.first);
         }
-        return p;
+        unordered_set<int> path;
+        for(auto &p:table)
+        {
+            auto f=flag.find(p.first);
+            if(f!=flag.end())
+                continue;
+            if(!core(table,p.first,path,flag))
+                return false;
+        }
+        return true;
+    }
+private:
+    bool core(unordered_map<int,vector<int>> &table,int course,unordered_set<int> &path,unordered_map<int,bool> &flag)
+    {
+        if(table.find(course)==table.end())
+        {
+            flag[course]=true;
+            return true;
+        }
+        for(int i=0;i<table[course].size();++i)
+        {
+            if(path.find(table[course][i])!=path.end())
+            {
+                return false;
+            }
+            path.insert(table[course][i]);
+            if(!core(table,table[course][i],path,flag))
+                return false;
+            path.erase(table[course][i]);
+        }
+        flag[course]=true;
+        return true;
     }
 };
