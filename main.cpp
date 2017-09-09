@@ -1,53 +1,69 @@
 #include "iostream"
 #include "vector"
-#include "algorithm"
 #include "unordered_map"
 #include "unordered_set"
 
 using namespace std;
 
+struct course
+{
+    int num;
+    int color;
+    int order;
+    course(int n):num(n),color(0),order(0){}
+};
+
 class Solution
 {
 public:
-    bool canFinish(int numCourses,vector<pair<int,int>> &prerequisites)
+    vector<int> findOrder(int numCourses,vector<pair<int,int>> &prerequisites)
     {
+        vector<int> courses(numCourses,0);
+        vector<bool> visited(numCourses,false);
         unordered_map<int,vector<int>> table;
-        unordered_map<int,bool> flag;
-        for(auto &p:prerequisites)
-        {
-            table[p.second].push_back(p.first);
-        }
         unordered_set<int> path;
-        for(auto &p:table)
+        for(auto &it:prerequisites)
+            table[it.first].push_back(it.second);
+        int n=0;
+        for(int i=0;i<numCourses;++i)
         {
-            auto f=flag.find(p.first);
-            if(f!=flag.end())
+            if(visited[i])
                 continue;
-            if(!core(table,p.first,path,flag))
-                return false;
+            if(!core(courses,visited,table,i,n,path))
+                return {};
         }
-        return true;
+        vector<int> ret(numCourses);
+        for(int i=0;i<numCourses;++i)
+        {
+            ret[courses[i]]=i;
+        }
+        return ret;
     }
 private:
-    bool core(unordered_map<int,vector<int>> &table,int course,unordered_set<int> &path,unordered_map<int,bool> &flag)
+    bool core(vector<int> &courses,vector<bool> &visited,unordered_map<int,vector<int>> &table,int course,int &n,unordered_set<int> &path)
     {
-        if(table.find(course)==table.end())
-        {
-            flag[course]=true;
+        if(path.find(course)!=path.end())
+            return false;
+        if(visited[course])
             return true;
-        }
-        for(int i=0;i<table[course].size();++i)
+        visited[course]=true;
+        path.insert(course);
+        for(auto &it:table[course])
         {
-            if(path.find(table[course][i])!=path.end())
-            {
+            if(!core(courses,visited,table,it,n,path))
                 return false;
-            }
-            path.insert(table[course][i]);
-            if(!core(table,table[course][i],path,flag))
-                return false;
-            path.erase(table[course][i]);
         }
-        flag[course]=true;
+        path.erase(course);
+        courses[course]=n;
+        ++n;
         return true;
     }
 };
+
+int main()
+{
+    vector<pair<int,int>> prere{{1,0}};
+    Solution s;
+    s.findOrder(2,prere);
+    return 0;
+}
