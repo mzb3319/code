@@ -1,76 +1,26 @@
 #include "iostream"
 #include "vector"
-#include "string"
 
 using namespace std;
 
-struct TreeNode
-{
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode (int x):val(x),left(nullptr),right(nullptr){}
-};
-
-class Codec
+class Solution
 {
 public:
-    string serialize(TreeNode *root)
+    int lengthOfLIS(vector<int> &nums)
     {
-        string str;
-        code(root,str);
-        return str;
-    }
-
-    TreeNode *deserialize(string data)
-    {
-        int index=0;
-        TreeNode *head=decode(data,index);
-        return head;
-    }
-private:
-    void code(TreeNode *node,string &str)
-    {
-        if(node== nullptr)
+        int ret=0;
+        vector<int> table(nums.size(),0);
+        for(int i=nums.size()-1;i>=0;--i)
         {
-            if(!str.empty())
-                str+=",";
-            str+="#";
-            return;
+            int n=0;
+            for(int j=i+1;j<nums.size();++j)
+            {
+                if(nums[i]<nums[j])
+                    n=max(table[j],n);
+            }
+            table[i]=n+1;
+            ret=max(table[i],ret);
         }
-        if(!str.empty())
-            str+=",";
-        str+=to_string(node->val);
-        code(node->left,str);
-        code(node->right,str);
-    }
-    TreeNode *decode(string &str,int &index)
-    {
-        if(index==str.length())
-            return nullptr;
-        if(str[index]==',')
-            ++index;
-        if(str[index]=='#')
-        {
-            ++index;
-            return nullptr;
-        }
-        int i=index;
-        while(str[index]!=',')
-            ++index;
-
-        int n=stoi(str.substr(i,index-i));
-        TreeNode *node=new TreeNode(n);
-        node->left=decode(str,index);
-        node->right=decode(str,index);
-        return node;
+        return ret;
     }
 };
-
-int main()
-{
-    Codec m;
-    string data="1,2,#,#,3,#,#";
-    m.deserialize(data);
-    return 0;
-}
