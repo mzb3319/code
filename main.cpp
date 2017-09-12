@@ -1,81 +1,81 @@
-#include "iostream"
+#include "string"
 #include "vector"
-#include "map"
-#include "queue"
-#include "unordered_set"
 
 using namespace std;
 
 class Solution
 {
 public:
-    vector<pair<int,int>> getSkyline(vector<vector<int>> &buildings)
+    int calculate(string s)
     {
-        if(buildings.empty())
-            return {};
-        multimap<int,pair<int,int>> table;
-        for(auto &it:buildings)
-            table.insert({it[0],{it[1],it[2]}});
-        int x=0,y=buildings.back()[1],h=0;
-        vector<pair<int,int>> ret;
-        while(!table.empty())
+        vector<int> nums;
+        vector<char> ops;
+        int num=0;
+        for(int i=0;i<s.length();++i)
         {
-            int a=table.begin()->first,b=table.begin()->second.first,c=table.begin()->second.second;
-            table.erase(table.begin());
-            if(a<y)
+            if(s[i]==' ')
+                continue;
+            if(isdigit(s[i]))
             {
-                if(c>h)
-                {
-                    if(!ret.empty()&&ret.back().first==a)
-                        ret.back().second=max(ret.back().second,c);
-                    else
-                        ret.push_back({a,c});
-                    if(b<y)
-                        table.insert({b,{y,h}});
-                    x=a;y=b;h=c;
-                }
-                else if(c<h)
-                {
-                    if(b>y)
-                        table.insert({y,{b,c}});
-                    x=a;
-                }
-                else
-                {
-                    x=a;
-                    y=max(y,b);
-                }
-            }
-            else if(a==y)
-            {
-                if(c!=h)
-                {
-                    if(!ret.empty()&&ret.back().first==a)
-                        ret.back().second=max(ret.back().second,a);
-                    else
-                        ret.push_back({a,c});
-                }
-                x=a,y=b;h=c;
+                num=num*10+s[i]-'0';
             }
             else
             {
-                if(!ret.empty())
-                    ret.back().second=max(ret.back().second,a);
-                else
-                    ret.push_back({a,0});
-                x=a;y=b;h=c;
+                ops.push_back(s[i]);
+                nums.push_back(num);
+                num=0;
             }
         }
-        ret.push_back({y,0});
-        return ret;
+        nums.push_back(num);
+        if(nums.size()==1)
+            return nums[0];
+        vector<int> nums2;
+        vector<char> ops2;
+        for(int i=0,j=0;i<nums.size();++i)
+        {
+            num=nums[i];
+            if(i==ops.size())
+            {
+                nums2.push_back(num);
+                continue;
+            }
+            if(ops[i]=='+'||ops[i]=='-')
+            {
+                nums2.push_back(num);
+                ops2.push_back(ops[i]);
+            }
+            else
+            {
+                while(ops[i]=='*'||ops[i]=='/')
+                {
+                    if(ops[i]=='*')
+                        num*=nums[i+1];
+                    else
+                        num/=nums[i+1];
+                    ++i;
+                    if(i==ops.size())
+                        break;
+                }
+                nums2.push_back(num);
+                if(i!=ops.size())
+                    ops2.push_back(ops[i]);
+            }
+        }
+        num=nums2[0];
+        for(int i=1;i<nums2.size();++i)
+        {
+            if(ops2[i-1]=='+')
+                num+=nums2[i];
+            else
+                num-=nums2[i];
+        }
+        return num;
     }
 };
 
 int main()
 {
-    vector<vector<int>> buildings{{2,9,10},{3,7,15},{5,12,12},{15,20,10},{19,24,8}};
     Solution s;
-    s.getSkyline(buildings);
-
+    s.calculate("3+2*2");
     return 0;
 }
