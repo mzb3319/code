@@ -1,57 +1,76 @@
 #include "iostream"
 #include "vector"
-#include "queue"
+#include "string"
 
 using namespace std;
 
-class MedianFinder
+struct TreeNode
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode (int x):val(x),left(nullptr),right(nullptr){}
+};
+
+class Codec
 {
 public:
-    MedianFinder()
+    string serialize(TreeNode *root)
     {
-
+        string str;
+        code(root,str);
+        return str;
     }
 
-    void addNum(int num)
+    TreeNode *deserialize(string data)
     {
-        if(!left.empty()&&num<=left.top())
-            left.push(num);
-        else if(!right.empty()&&num>=right.top())
-            right.push(num);
-        else
-            left.push(num);
-        while(left.size()<right.size())
-        {
-            int n=right.top();
-            left.push(n);
-            right.pop();
-        }
-        while(left.size()>right.size()+1)
-        {
-            int n=left.top();
-            right.push(n);
-            left.pop();
-        }
+        int index=0;
+        TreeNode *head=decode(data,index);
+        return head;
     }
-
-    double findMedian()
-    {
-        if(left.size()>right.size())
-            return left.top();
-        double a=left.top(),b=right.top();
-        return (a+b)/2;
-    }
-
 private:
-    priority_queue<int> left;
-    priority_queue<int,vector<int>,greater<int>> right;
+    void code(TreeNode *node,string &str)
+    {
+        if(node== nullptr)
+        {
+            if(!str.empty())
+                str+=",";
+            str+="#";
+            return;
+        }
+        if(!str.empty())
+            str+=",";
+        str+=to_string(node->val);
+        code(node->left,str);
+        code(node->right,str);
+    }
+    TreeNode *decode(string &str,int &index)
+    {
+        if(index==str.length())
+            return nullptr;
+        if(str[index]==',')
+            ++index;
+        if(str[index]=='#')
+        {
+            ++index;
+            return nullptr;
+        }
+        int i=index;
+        while(str[index]!=',')
+            ++index;
+
+        int n=stoi(str.substr(i,index-i));
+        TreeNode *node=new TreeNode(n);
+        node->left=decode(str,index);
+        node->right=decode(str,index);
+        return node;
+    }
 };
 
 int main()
 {
-    MedianFinder m;
-    m.addNum(1);
-    m.addNum(2);
-    cout<<m.findMedian()<<endl;
+    Codec m;
+    string data="1,2,#,#,3,#,#";
+    m.deserialize(data);
     return 0;
 }
