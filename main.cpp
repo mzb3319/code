@@ -1,31 +1,46 @@
 #include "iostream"
+#include "vector"
 
 using namespace std;
 
-struct ListNode
+struct TreeNode
 {
     int val;
-    ListNode *next;
+    TreeNode *left;
+    TreeNode *right;
 };
 
 class Solution
 {
 public:
-    bool isPalindrome(ListNode *head)
+    TreeNode* lowestCommonAncestor(TreeNode *root,TreeNode *p,TreeNode *q)
     {
-        if(head== nullptr)
-            return true;
-        return core(head,&head);
+        if(root== nullptr)
+            return nullptr;
+        vector<vector<TreeNode*>> ret;
+        vector<TreeNode *> path;
+
+        core(root,path,ret,p,q);
+
+        if(ret.size()<2)
+            return nullptr;
+        int i=0;
+        while(i<ret[0].size()&&i<ret[1].size()&&ret[0][i]==ret[1][i])
+            ++i;
+        return ret[0][i-1];
     }
 private:
-    bool core(ListNode *curr,ListNode **head)
+    void core(TreeNode *node,vector<TreeNode*> &path,vector<vector<TreeNode*>> &ret,TreeNode *p,TreeNode *q)
     {
-        if(curr->next)
-        {
-            if(!core(curr->next,head))
-                return false;
-            *head=(*head)->next;
-        }
-        return curr->val==(*head)->val;
+        if(ret.size()==2)
+            return;
+        if(node== nullptr)
+            return;
+        path.push_back(node);
+        if(node==p||node==q)
+            ret.push_back(path);
+        core(node->left,path,ret,p,q);
+        core(node->right,path,ret,p,q);
+        path.pop_back();
     }
 };
