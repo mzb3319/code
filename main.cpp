@@ -1,59 +1,57 @@
 #include "iostream"
 #include "vector"
+#include "queue"
 
 using namespace std;
 
-class Solution
+class MedianFinder
 {
 public:
-    void gameOfLife(vector<vector<int>> &board)
+    MedianFinder()
     {
-        for(int i=0;i<board.size();++i)
-        {
-            for(int j=0;j<board.front().size();++j)
-            {
-                //0->dead;1->live;-1->dead2live;2->live2dead
-                int count=0;
-                //top
-                if(i-1>=0&&board[i-1][j]>0)
-                    ++count;
-                //bottom
-                if(i+1<board.size()&&board[i+1][j]>0)
-                    ++count;
-                //left
-                if(j-1>=0&&board[i][j-1]>0)
-                    ++count;
-                //right
-                if(j+1<board.front().size()&&board[i][j+1]>0)
-                    ++count;
-                //top-left
-                if(i-1>=0&&j-1>=0&&board[i-1][j-1]>0)
-                    ++count;
-                //top-right
-                if(i-1>=0&&j+1<board.front().size()&&board[i-1][j+1]>0)
-                    ++count;
-                //bottom-left
-                if(i+1<board.size()&&j-1>=0&&board[i+1][j-1]>0)
-                    ++count;
-                //bottom-right
-                if(i+1<board.size()&&j+1<board.front().size()&&board[i+1][j+1]>0)
-                    ++count;
 
-                if(board[i][j]==0&&count==3)
-                    board[i][j]=-1;
-                else if(board[i][j]==1&&(count<2||count>3))
-                    board[i][j]=2;
-            }
-        }
-        for(int i=0;i<board.size();++i)
+    }
+
+    void addNum(int num)
+    {
+        if(!left.empty()&&num<=left.top())
+            left.push(num);
+        else if(!right.empty()&&num>=right.top())
+            right.push(num);
+        else
+            left.push(num);
+        while(left.size()<right.size())
         {
-            for(int j=0;j<board.front().size();++j)
-            {
-                if(board[i][j]==-1)
-                    board[i][j]=1;
-                else if(board[i][j]==2)
-                    board[i][j]=0;
-            }
+            int n=right.top();
+            left.push(n);
+            right.pop();
+        }
+        while(left.size()>right.size()+1)
+        {
+            int n=left.top();
+            right.push(n);
+            left.pop();
         }
     }
+
+    double findMedian()
+    {
+        if(left.size()>right.size())
+            return left.top();
+        double a=left.top(),b=right.top();
+        return (a+b)/2;
+    }
+
+private:
+    priority_queue<int> left;
+    priority_queue<int,vector<int>,greater<int>> right;
 };
+
+int main()
+{
+    MedianFinder m;
+    m.addNum(1);
+    m.addNum(2);
+    cout<<m.findMedian()<<endl;
+    return 0;
+}
