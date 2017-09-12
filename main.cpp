@@ -6,21 +6,16 @@ using namespace std;
 class Solution
 {
 public:
-    bool searchMatrix(vector<vector<int>> &matrix,int target)
+    bool isAnagram(string &s,string &t)
     {
-        if(matrix.empty()||matrix.front().empty())
-            return false;
-        int row=0,col=matrix.front().size()-1;
-        while(row<matrix.size()&&col>=0)
-        {
-            if(matrix[row][col]==target)
-                return true;
-            else if(matrix[row][col]<target)
-                ++row;
-            else
-                --col;
-        }
-
-        return false;
+        vector<int> table(26,0);
+        for(char c:s)
+            ++table[c-'a'];
+        for(char c:t)
+            --table[c-'a'];
+        for(int n:table)
+            if(n!=0)
+                return false;
+        return true;
     }
 };
