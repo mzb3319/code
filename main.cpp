@@ -4,32 +4,49 @@
 #include "vector"
 #include "algorithm"
 #include "queue"
+#include "unordered_set"
 
 using namespace std;
 
-class Solution
-{
+class RandomizedSet {
 public:
-    int kthSmallest(vector<vector<int>> &matrix,int k)
-    {
-        priority_queue<int> table;
-        for(int i=0;i<matrix.size();++i)
-        {
-            for(int j=0;j<matrix.front().size();++j)
-            {
-                table.push(matrix[i][j]);
-                if(table.size()>k)
-                    table.pop();
-            }
-        }
-        return table.top();
+    /** Initialize your data structure here. */
+    RandomizedSet() {
+
     }
+
+    /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+    bool insert(int val) {
+        if(table.find(val)!=table.end())
+            return false;
+        table_v.push_back(val);
+        table[val]=table_v.size()-1;
+        return true;
+    }
+
+    /** Removes a value from the set. Returns true if the set contained the specified element. */
+    bool remove(int val) {
+        if(table.find(val)==table.end())
+            return false;
+        table_v[table[val]]=table_v.back();
+        table[table_v.back()]=table[val];
+        table_v.pop_back();
+        table.erase(val);
+        return true;
+    }
+
+    /** Get a random element from the set. */
+    int getRandom() {
+        int r=random()%(table_v.size());
+        return table_v[r];
+    }
+private:
+    unordered_map<int,int> table;
+    vector<int> table_v;
 };
 
 int main()
 {
-    Solution s;
-    vector<vector<int>> matrix{{1,5,9},{10,11,13},{12,13,15}};
-    s.kthSmallest(matrix,8);
+    cout<<random()%5<<endl;
     return 0;
 }
