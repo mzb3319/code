@@ -6,61 +6,32 @@ using namespace std;
 class Solution
 {
 public:
-    int longestIncreasingPath(vector<vector<int>> &matrix)
+    bool increasingTriplet(vector<int> &nums)
     {
-        if(matrix.empty()||matrix.front().empty())
-            return 0;
-        vector<vector<int>> table(matrix.size(),vector<int>(matrix.front().size(),-1));
-
-        int ret=1;
-
-        for(int i=0;i<matrix.size();++i)
+        vector<int> left2right,right2left;
+        for(int i=0;i<nums.size();++i)
         {
-            for(int j=0;j<matrix.front().size();++j)
-            {
-                ret=max(ret,check(matrix,i,j,table));
-            }
+            if(left2right.empty())
+                left2right.push_back(nums[i]);
+            else if(nums[i]<left2right.back())
+                left2right.push_back(nums[i]);
+            else
+                left2right.push_back(left2right[left2right.size()-1]);
         }
-        return ret;
-    }
-private:
-    int check(vector<vector<int>> &matrix,int i,int j,vector<vector<int>> &table)
-    {
-        if(i<0||j<0||i>=matrix.size()||j>=matrix.front().size())
-            return 0;
-        if(table[i][j]!=-1)
-            return table[i][j];
-
-        int top=0;
-        if(i-1>=0&&matrix[i-1][j]>matrix[i][j])
-            top=check(matrix,i-1,j,table);
-
-        int bottom=0;
-        if(i+1<matrix.size()&&matrix[i+1][j]>matrix[i][j])
-            bottom=check(matrix,i+1,j,table);
-
-        int left=0;
-        if(j-1>=0&&matrix[i][j-1]>matrix[i][j])
-            left=check(matrix,i,j-1,table);
-
-        int right=0;
-        if(j+1<matrix.front().size()&&matrix[i][j+1]>matrix[i][j])
-            right=check(matrix,i,j+1,table);
-
-        int currMax=max(top,bottom);
-        currMax=max(currMax,left);
-        currMax=max(currMax,right);
-
-        table[i][j]=currMax+1;
-        return table[i][j];
+        for(int i=nums.size()-1;i>=0;--i)
+        {
+            if(right2left.empty())
+                right2left.push_back(nums[i]);
+            else if(nums[i]>right2left.back())
+                right2left.push_back(nums[i]);
+            else
+                right2left.push_back(right2left[right2left.size()-1]);
+        }
+        for(int i=1;i<nums.size()-1;++i)
+        {
+            if(left2right[i-1]<nums[i]&&nums[i]<right2left[nums.size()-2-i])
+                return true;
+        }
+        return false;
     }
 };
-
-
-int main()
-{
-    vector<vector<int>> matrix{{9,9,4}};
-    Solution s;
-    cout<<s.longestIncreasingPath(matrix)<<endl;
-    return 0;
-}
