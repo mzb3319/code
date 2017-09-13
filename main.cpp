@@ -1,37 +1,78 @@
 #include "iostream"
 #include "vector"
+#include "deque"
 
 using namespace std;
 
-class Solution
-{
+  // This is the interface that allows for creating nested lists.
+  // You should not implement it, or speculate about its implementation
+  class NestedInteger {
+    public:
+     // Return true if this NestedInteger holds a single integer, rather than a nested list.
+      bool isInteger() const;
+
+     // Return the single integer that this NestedInteger holds, if it holds a single integer
+     // The result is undefined if this NestedInteger holds a nested list
+     int getInteger() const;
+
+      // Return the nested list that this NestedInteger holds, if it holds a nested list
+      // The result is undefined if this NestedInteger holds a single integer
+      const vector<NestedInteger> &getList() const;
+  };
+class NestedIterator {
 public:
-    bool increasingTriplet(vector<int> &nums)
-    {
-        vector<int> left2right,right2left;
-        for(int i=0;i<nums.size();++i)
-        {
-            if(left2right.empty())
-                left2right.push_back(nums[i]);
-            else if(nums[i]<left2right.back())
-                left2right.push_back(nums[i]);
-            else
-                left2right.push_back(left2right[left2right.size()-1]);
-        }
-        for(int i=nums.size()-1;i>=0;--i)
-        {
-            if(right2left.empty())
-                right2left.push_back(nums[i]);
-            else if(nums[i]>right2left.back())
-                right2left.push_back(nums[i]);
-            else
-                right2left.push_back(right2left[right2left.size()-1]);
-        }
-        for(int i=1;i<nums.size()-1;++i)
-        {
-            if(left2right[i-1]<nums[i]&&nums[i]<right2left[nums.size()-2-i])
-                return true;
-        }
-        return false;
+    NestedIterator(vector<NestedInteger> &nestedList):index(0){
+        core(nestedList);
     }
+
+    int next() {
+        return table[index++];
+    }
+
+    bool hasNext() {
+        return index<table.size();
+    }
+private:
+    vector<int> table;
+    int index;
+    void core(const vector<NestedInteger> &list)
+    {
+        for(int i=0;i<list.size();++i)
+        {
+            if(list[i].isInteger())
+                table.push_back(list[i].getInteger());
+            else
+            {
+                core(list[i].getList());
+            }
+        }
+    }
+};
+
+class NestedIterator1 {
+public:
+    NestedIterator1(vector<NestedInteger> &nestedList):list(nestedList.begin(),nestedList.end()){
+
+    }
+
+    int next() {
+        int tmp=list.front().getInteger();
+        list.pop_front();
+        return tmp;
+    }
+
+    bool hasNext() {
+        while(!list.empty()&&!(list.front().isInteger()))
+        {
+            auto tmp=list.front().getList();
+            list.pop_front();
+            for(int i=tmp.size()-1;i>=0;--i)
+            {
+                list.push_front(tmp[i]);
+            }
+        }
+        return list.empty()?false:true;;
+    }
+private:
+    deque<NestedInteger> list;
 };
