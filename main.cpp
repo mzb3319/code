@@ -9,18 +9,20 @@ using namespace std;
 class Solution
 {
 public:
-    vector<int> topKFrequent(vector<int> &nums,int k)
+    vector<int> intersect(vector<int> &nums1,vector<int> &nums2)
     {
         unordered_map<int,int> table;
-        for(int n:nums)
+        for(int n:nums1)
             ++table[n];
-        vector<pair<int,int>> ret;
-        for(auto &it:table)
-            ret.push_back(it);
-        sort(ret.begin(),ret.end(),[](const pair<int,int> &a,const pair<int,int> &b){return a.second>=b.second;});
-        vector<int> r;
-        for(int i=0;i<k;++i)
-            r.push_back(ret[i].first);
-        return r;
+        vector<int> ret;
+        for(int i=0;i<nums2.size();++i)
+        {
+            if(table.find(nums2[i])!=table.end()&&table[nums2[i]]>0)
+            {
+                ret.push_back(nums2[i]);
+                --table[nums2[i]];
+            }
+        }
+        return ret;
     }
 };
