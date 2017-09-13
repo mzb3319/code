@@ -3,21 +3,33 @@
 #include "unordered_map"
 #include "vector"
 #include "algorithm"
+#include "queue"
 
 using namespace std;
 
 class Solution
 {
 public:
-    int getSum(int a,int b)
+    int kthSmallest(vector<vector<int>> &matrix,int k)
     {
-        while(b!=0)
+        priority_queue<int> table;
+        for(int i=0;i<matrix.size();++i)
         {
-            int c=a^b;
-            b&=a;
-            b<<=1;
-            a=c;
+            for(int j=0;j<matrix.front().size();++j)
+            {
+                table.push(matrix[i][j]);
+                if(table.size()>k)
+                    table.pop();
+            }
         }
-        return a;
+        return table.top();
     }
 };
+
+int main()
+{
+    Solution s;
+    vector<vector<int>> matrix{{1,5,9},{10,11,13},{12,13,15}};
+    s.kthSmallest(matrix,8);
+    return 0;
+}
