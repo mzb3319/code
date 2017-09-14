@@ -11,21 +11,24 @@ using namespace std;
 class Solution
 {
 public:
-    int firstUniqChar(string s)
+    int fourSumCount(vector<int> &A,vector<int> &B,vector<int> &C,vector<int> &D)
     {
-        vector<int> table(26,-1);
-        for(int i=0;i<s.length();++i)
+        unordered_map<int,int> AB,CD;
+        for(int i=0;i<A.size();++i)
         {
-            if(table[s[i]-'a']!=-1)
-                table[s[i]-'a']=-2;
-            else
-                table[s[i]-'a']=i;
+            for(int j=0;j<B.size();++j)
+            {
+                ++AB[A[i]+B[j]];
+                ++CD[-(C[i]+D[j])];
+            }
         }
-        for(char c:s)
+        int ret=0;
+        for(const auto &it:AB)
         {
-            if(table[c-'a']>0)
-                return table[c-'a'];
+            auto f=CD.find(it.first);
+            if(f!=CD.end())
+                ret+=(it.second)*(f->second);
         }
-        return -1;
+        return ret;
     }
 };
