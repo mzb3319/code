@@ -11,32 +11,21 @@ using namespace std;
 class Solution
 {
 public:
-    Solution (vector<int> nums):original(nums),shuffled(nums)
+    int firstUniqChar(string s)
     {
-
-    }
-
-    vector<int> reset()
-    {
-        return original;
-    }
-
-    vector<int> shuffle()
-    {
-        for(int i=0;i<shuffled.size();++i)
+        vector<int> table(26,-1);
+        for(int i=0;i<s.length();++i)
         {
-            int r=random()%shuffled.size();
-            swap(i,r);
+            if(table[s[i]-'a']!=-1)
+                table[s[i]-'a']=-2;
+            else
+                table[s[i]-'a']=i;
         }
-        return shuffled;
-    }
-private:
-    vector<int> original;
-    vector<int> shuffled;
-    void swap(int i,int r)
-    {
-        int tmp=shuffled[i];
-        shuffled[i]=shuffled[r];
-        shuffled[r]=tmp;
+        for(char c:s)
+        {
+            if(table[c-'a']>0)
+                return table[c-'a'];
+        }
+        return -1;
     }
 };
